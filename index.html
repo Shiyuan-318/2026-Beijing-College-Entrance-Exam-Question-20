@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 北京高考数学 · 第 20 题 详解演示</title>
+<style>
+  :root{
+    --ink:#1c2431;
+    --ink-soft:#3e4a5c;
+    --muted:#6b7a90;
+    --line:#e6ebf2;
+    --bg:#f3f6fa;
+    --card:#ffffff;
+    --accent:#2f6bff;
+    --accent-soft:#eaf0ff;
+    --curve:#2f6bff;
+    --tangent:#f0913a;
+    --crit:#0fb389;
+    --kline:#a855f7;
+    --point:#ef476f;
+    --radius:16px;
+    --shadow:0 1px 2px rgba(16,24,40,.04), 0 10px 28px rgba(16,24,40,.06);
+    --font:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC","Noto Sans CJK SC",sans-serif;
+    --math:"Cambria Math","Latin Modern Math","Times New Roman",Georgia,"Songti SC",serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(1200px 600px at 12% -10%, #ffffff 0%, var(--bg) 55%, #eef2f8 100%);
+    min-height:100vh;
+    color:var(--ink);
+    font-family:var(--font);
+    -webkit-font-smoothing:antialiased;
+    font-size:15px;
+    line-height:1.75;
+  }
+  header.top{
+    padding:22px 28px 6px;
+    max-width:1560px;margin:0 auto;
+  }
+  .brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--accent-soft);color:var(--accent);
+    border:1px solid #d8e3ff;
+    font-size:12.5px;font-weight:600;letter-spacing:.4px;
+    padding:4px 12px;border-radius:999px;
+  }
+  h1{font-size:22px;margin:0;letter-spacing:.2px;font-weight:700;}
+  h1 small{font-weight:500;color:var(--muted);font-size:14px;margin-left:8px;letter-spacing:0;}
+  main{
+    max-width:1560px;margin:0 auto;padding:14px 28px 40px;
+    display:grid;grid-template-columns:minmax(380px,44%) minmax(0,1fr);
+    gap:22px;align-items:start;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);box-shadow:var(--shadow);
+  }
+  /* ---------- 左栏 ---------- */
+  .left{display:flex;flex-direction:column;gap:16px;}
+  .statement{padding:20px 22px 18px;}
+  .statement h2{margin:0 0 10px;font-size:15px;color:var(--muted);font-weight:600;letter-spacing:.5px;}
+  .statement p{margin:6px 0;}
+  .q-title{font-size:17px;font-weight:700;margin:0 0 12px;}
+  .q-ask{list-style:none;padding:0;margin:12px 0 0;display:flex;flex-direction:column;gap:6px;}
+  .q-ask li{display:flex;gap:10px;align-items:flex-start;}
+  .q-ask .no{
+    flex:0 0 auto;width:22px;height:22px;border-radius:7px;background:var(--accent-soft);
+    color:var(--accent);font-size:12.5px;font-weight:700;display:grid;place-items:center;margin-top:3px;
+  }
+  .tabs{display:flex;gap:8px;background:#e9eef6;padding:6px;border-radius:14px;}
+  .tabs button{
+    flex:1;border:0;background:transparent;cursor:pointer;font-family:var(--font);
+    font-size:14.5px;font-weight:600;color:var(--muted);padding:9px 6px;border-radius:10px;
+    transition:.18s;
+  }
+  .tabs button:hover{color:var(--ink-soft);}
+  .tabs button.on{background:#fff;color:var(--accent);box-shadow:0 2px 8px rgba(47,107,255,.16);}
+  .view{display:none;flex-direction:column;gap:16px;animation:fade .28s ease;}
+  .view.on{display:flex;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  .seg{display:flex;gap:8px;flex-wrap:wrap;}
+  .seg button{
+    border:1px solid var(--line);background:#fff;color:var(--ink-soft);
+    font-family:var(--font);font-size:13.5px;font-weight:600;padding:7px 14px;border-radius:999px;
+    cursor:pointer;transition:.18s;
+  }
+  .seg button:hover{border-color:#cdd9ec;}
+  .seg button.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(47,107,255,.25);}
+
+  .sol{padding:20px 22px 22px;}
+  .sol h3{margin:0 0 4px;font-size:17px;font-weight:700;}
+  .sol .lead{color:var(--muted);font-size:13.5px;margin:0 0 16px;}
+  .steps{list-style:none;counter-reset:s;padding:0;margin:0;display:flex;flex-direction:column;gap:14px;}
+  .steps>li{position:relative;padding-left:34px;counter-increment:s;}
+  .steps>li::before{
+    content:counter(s);position:absolute;left:0;top:2px;
+    width:22px;height:22px;border-radius:7px;background:var(--accent-soft);color:var(--accent);
+    font-size:12.5px;font-weight:700;display:grid;place-items:center;
+  }
+  .steps .why{color:var(--muted);font-size:13px;display:block;margin-top:2px;}
+  .formula{
+    font-family:var(--math);font-style:italic;font-size:17px;color:var(--ink);
+    background:#f8fafd;border:1px solid var(--line);border-radius:10px;
+    padding:9px 14px;margin:9px 0;display:block;overflow-x:auto;white-space:nowrap;
+  }
+  .formula .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 2px;}
+  .formula .frac .num{padding:0 5px;font-style:italic;}
+  .formula .frac .den{border-top:1.2px solid currentColor;padding:0 5px;font-style:italic;}
+  .formula .nb{font-style:normal;}
+  .m{font-family:var(--math);font-style:italic;font-size:1.06em;}
+  .m .nb{font-style:normal;}
+  .mb{font-family:var(--math);font-size:1.06em;}
+  sup,sub{font-size:.75em;}
+  .tip{
+    background:#f2f9f6;border:1px solid #d5eee4;border-left:3px solid var(--crit);
+    border-radius:10px;padding:12px 14px;font-size:13.5px;color:#2c5a4c;margin-top:16px;
+  }
+  .tip b{color:#14624a;}
+  .note{
+    background:#fff8ef;border:1px solid #f5e3c8;border-left:3px solid var(--tangent);
+    border-radius:10px;padding:12px 14px;font-size:13.5px;color:#7a5427;margin-top:16px;
+  }
+  .note b{color:#8a5a12;}
+  .concl{
+    margin-top:18px;padding:13px 16px;border-radius:12px;
+    background:linear-gradient(135deg,#eef3ff,#f7f9ff);border:1px solid #d9e4ff;
+    font-size:14.5px;color:#1f3d7a;
+  }
+  .concl b{color:var(--accent);}
+  .key{color:var(--accent);font-weight:700;}
+  .grn{color:#0d8f6b;font-weight:700;}
+  .ratio-box{margin-top:16px;}
+  .ratio-box .cap{font-size:13px;color:var(--muted);margin:0 0 6px;}
+  canvas#ratio{width:100%;height:190px;display:block;border:1px solid var(--line);border-radius:12px;background:#fbfcfe;}
+
+  /* ---------- 右栏 ---------- */
+  .right{position:sticky;top:18px;display:flex;flex-direction:column;height:calc(100vh - 40px);min-height:560px;}
+  .plot-card{display:flex;flex-direction:column;height:100%;overflow:hidden;}
+  .plot-head{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap;
+  }
+  .plot-head .t{font-size:14.5px;font-weight:700;}
+  .plot-head .t span{display:block;font-weight:500;font-size:12.5px;color:var(--muted);}
+  .tools{display:flex;gap:8px;align-items:center;}
+  .tools button{
+    width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:#fff;
+    color:var(--ink-soft);font-size:15px;cursor:pointer;display:grid;place-items:center;transition:.16s;
+    font-family:var(--font);
+  }
+  .tools button:hover{border-color:#c9d7ee;color:var(--accent);background:#f8faff;}
+  .tools .wide{width:auto;padding:0 12px;font-size:13px;font-weight:600;}
+  .stage{position:relative;flex:1;min-height:320px;}
+  #plot{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:none;}
+  #plot.grabbing{cursor:grabbing;}
+  .readout{
+    position:absolute;left:12px;top:10px;font-family:var(--math);font-size:12.5px;color:var(--muted);
+    background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:8px;padding:2px 9px;
+    backdrop-filter:blur(4px);pointer-events:none;
+  }
+  .hint{
+    position:absolute;right:12px;bottom:10px;font-size:12px;color:var(--muted);
+    background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:8px;padding:2px 9px;
+    backdrop-filter:blur(4px);pointer-events:none;
+  }
+  .foot{
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    padding:12px 18px;border-top:1px solid var(--line);background:#fcfdff;
+  }
+  .legend{display:none;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink-soft);}
+  .legend.on{display:flex;}
+  .legend i{display:inline-block;width:16px;height:0;border-top:3px solid;border-radius:2px;margin-right:6px;vertical-align:middle;}
+  .legend .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+  .kctl{display:none;align-items:center;gap:12px;flex:1 1 320px;min-width:240px;}
+  .kctl.on{display:flex;}
+  .kctl label{font-family:var(--math);font-style:italic;font-size:15px;color:var(--kline);white-space:nowrap;}
+  .kctl input[type=range]{
+    -webkit-appearance:none;appearance:none;flex:1;height:5px;border-radius:99px;background:#e7e2f7;outline:none;
+  }
+  .kctl input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:#fff;
+    border:2.5px solid var(--kline);cursor:pointer;box-shadow:0 1px 4px rgba(168,85,247,.4);
+  }
+  .kctl input[type=range]::-moz-range-thumb{
+    width:15px;height:15px;border-radius:50%;background:#fff;border:2.5px solid var(--kline);cursor:pointer;
+  }
+  .kval{font-family:var(--math);font-size:13.5px;color:var(--muted);white-space:nowrap;min-width:118px;}
+  .page-foot{
+    max-width:1560px;margin:0 auto;padding:0 28px 30px;color:var(--muted);font-size:12.5px;
+    display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  @media (max-width:1080px){
+    main{grid-template-columns:1fr;padding:14px 16px 30px;}
+    header.top{padding:18px 16px 4px;}
+    .page-foot{padding:0 16px 24px;}
+    .right{position:static;height:auto;min-height:0;}
+    .stage{height:56vh;min-height:420px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <span class="badge">2026 · 北京卷</span>
+    <h1>第 20 题 函数与导数 <small>详解 · 可交互演示</small></h1>
+  </div>
+</header>
+
+<main>
+  <!-- ================= 左栏 ================= -->
+  <section class="left">
+
+    <article class="card statement">
+      <h2>题 目</h2>
+      <p class="q-title">20. 已知函数 <span class="m">f</span>(<span class="m">x</span>) = <span class="m">x</span><sup>2</sup> + <span class="m">mx</span> − 4<span class="m">e</span><sup><span class="m">nx</span>−1</sup>（其中 <span class="m">n</span> 是整数），曲线 <span class="m">y</span> = <span class="m">f</span>(<span class="m">x</span>) 在点 (−1, <span class="m">f</span>(−1)) 处的切线方程为</p>
+      <p class="mb" style="text-align:center;font-size:16px;margin:10px 0 4px;">4<span class="m">x</span> + <span class="m">e</span><sup>2</sup><span class="m">y</span> + <span class="m">e</span><sup>2</sup> + 8 = 0</p>
+      <ul class="q-ask">
+        <li><span class="no">1</span><span>求 <span class="m">m</span>, <span class="m">n</span> 的值；</span></li>
+        <li><span class="no">2</span><span>求 <span class="m">f</span>(<span class="m">x</span>) 的极值点个数；</span></li>
+        <li><span class="no">3</span><span>当 <span class="m">k</span> &gt; 0 时，讨论直线 <span class="m">y</span> = <span class="m">kx</span> − 1 与曲线 <span class="m">y</span> = <span class="m">f</span>(<span class="m">x</span>) 的公共点个数。</span></li>
+      </ul>
+    </article>
+
+    <div class="tabs">
+      <button data-q="1" class="on">第 1 问</button>
+      <button data-q="2">第 2 问</button>
+      <button data-q="3">第 3 问</button>
+    </div>
+
+    <!-- ---------------- 第 1 问 ---------------- -->
+    <div class="view on" data-view="1">
+      <div class="seg" data-seg="1">
+        <button data-m="a" class="on">官方答案解法</button>
+        <button data-m="b">Lambert W 解法</button>
+      </div>
+
+      <article class="card sol" data-panel="1a">
+        <h3>切线的两个信息，正好解两个未知数</h3>
+        <p class="lead">官方解法 · 用"切点满足曲线"和"切线斜率等于导数"两条信息联立。</p>
+        <ol class="steps">
+          <li>把切线方程整理成 <span class="m">y</span> = … 的形式，读出两件事：
+            <span class="formula">4<span class="m">x</span> + <span class="m">e</span><sup>2</sup><span class="m">y</span> + <span class="m">e</span><sup>2</sup> + 8 = 0　⟹　<span class="m">y</span> = −<span class="frac"><span class="num">4</span><span class="den"><span class="m">e</span><sup>2</sup></span></span><span class="m">x</span> − 1 − <span class="frac"><span class="num">8</span><span class="den"><span class="m">e</span><sup>2</sup></span></span></span>
+            <span class="why">斜率为 −4/<span class="m">e</span><sup>2</sup>；再令 <span class="m">x</span> = −1 得 <span class="m">y</span> = −1 − 4<span class="m">e</span><sup>−2</sup>，这就是切点的纵坐标。</span>
+          </li>
+          <li>求导：<span class="formula"><span class="m">f</span>′(<span class="m">x</span>) = 2<span class="m">x</span> + <span class="m">m</span> − 4<span class="m">n</span><span class="m">e</span><sup><span class="m">nx</span>−1</sup></span></li>
+          <li>切点在曲线上：<span class="m">f</span>(−1) = 1 − <span class="m">m</span> − 4<span class="m">e</span><sup>−<span class="m">n</span>−1</sup> = −1 − 4<span class="m">e</span><sup>−2</sup>，即
+            <span class="formula" style="text-align:center;"><span class="m">m</span> + 4<span class="m">e</span><sup>−<span class="m">n</span>−1</sup> = 2 + 4<span class="m">e</span><sup>−2</sup>　①</span>
+          </li>
+          <li>切线斜率等于导数值：<span class="m">f</span>′(−1) = −2 + <span class="m">m</span> − 4<span class="m">n</span><span class="m">e</span><sup>−<span class="m">n</span>−1</sup> = −4<span class="m">e</span><sup>−2</sup>，即
+            <span class="formula" style="text-align:center;"><span class="m">m</span> − 4<span class="m">n</span><span class="m">e</span><sup>−<span class="m">n</span>−1</sup> = 2 − 4<span class="m">e</span><sup>−2</sup>　②</span>
+          </li>
+          <li>① − ② 把 <span class="m">m</span> 消掉：4(<span class="m">n</span>+1)<span class="m">e</span><sup>−<span class="m">n</span>−1</sup> = 8<span class="m">e</span><sup>−2</sup>，两边同除 4：
+            <span class="formula" style="text-align:center;font-size:18px;">(<span class="m">n</span>+1)<span class="m">e</span><sup>−(<span class="m">n</span>+1)</sup> = 2<span class="m">e</span><sup>−2</sup></span>
+            <span class="why">这一步之后，指数和多项式混在一起，用普通方法解不出 <span class="m">n</span>。</span>
+          </li>
+          <li>因为 <span class="m">n</span> 是整数，令 <span class="m">t</span> = <span class="m">n</span>+1（也是整数），方程变成 <span class="m">t</span><span class="m">e</span><sup>−<span class="m">t</span></sup> = 2<span class="m">e</span><sup>−2</sup> ≈ 0.2707。考察 <span class="m">g</span>(<span class="m">t</span>) = <span class="m">t</span><span class="m">e</span><sup>−<span class="m">t</span></sup>：
+            <span class="why">· <span class="m">t</span> ≤ 0 时 <span class="m">g</span>(<span class="m">t</span>) ≤ 0，不可能等于正数；<br>
+              · <span class="m">t</span> = 1 时 <span class="m">g</span>(1) = 1/<span class="m">e</span> ≈ 0.3679 ≠ 0.2707；<br>
+              · <span class="m">t</span> ≥ 1 时 <span class="m">g</span> 单调递减，而 <span class="m">g</span>(2) = 2<span class="m">e</span><sup>−2</sup> 正好相等。<br>
+              所以整数解只有 <span class="m">t</span> = 2，即 <span class="key">n = 1</span>。</span>
+          </li>
+          <li>代回 ①：<span class="m">m</span> = 2 + 4<span class="m">e</span><sup>−2</sup> − 4<span class="m">e</span><sup>−2</sup> = <span class="key">2</span>。</li>
+        </ol>
+        <div class="tip"><b>大白话：</b>切线一次性给了你两个条件——"碰在哪个点"和"斜多少"。函数里正好有 <span class="m">m</span>、<span class="m">n</span> 两个未知数，两个条件解两个未知数，不多不少。</div>
+        <div class="concl"><b>结论：</b><span class="m">m</span> = 2，<span class="m">n</span> = 1，于是 <span class="m">f</span>(<span class="m">x</span>) = <span class="m">x</span><sup>2</sup> + 2<span class="m">x</span> − 4<span class="m">e</span><sup><span class="m">x</span>−1</sup>。</div>
+      </article>
+
+      <article class="card sol" data-panel="1b" hidden>
+        <h3>把指数"打包"，让 W 函数一次解完</h3>
+        <p class="lead">同样的方程 (<span class="m">n</span>+1)<span class="m">e</span><sup>−(<span class="m">n</span>+1)</sup> = 2<span class="m">e</span><sup>−2</sup>，改用 Lambert W 显式解出<b>全部实数解</b>，就能看清"整数条件"过滤掉了什么。</p>
+        <div class="note"><b>先记住 W 函数：</b>如果 <span class="m">w</span>·<span class="m">e</span><sup><span class="m">w</span></sup> = <span class="m">a</span>，就把这个 <span class="m">w</span> 记作 <span class="m">W</span>(<span class="m">a</span>)。<br>
+          当 −1/<span class="m">e</span> &lt; <span class="m">a</span> &lt; 0 时，同一个 <span class="m">a</span> 对应<b>两个</b>实数值，分别记作 <span class="m">W</span><sub>0</sub>(<span class="m">a</span>) 和 <span class="m">W</span><sub>−1</sub>(<span class="m">a</span>)。</div>
+        <ol class="steps">
+          <li>前面 5 步与官方解法相同，仍然得到 <span class="formula">(<span class="m">n</span>+1)<span class="m">e</span><sup>−(<span class="m">n</span>+1)</sup> = 2<span class="m">e</span><sup>−2</sup></span></li>
+          <li>两边同乘 −1，让它变成 W 需要的样子：<span class="formula">−(<span class="m">n</span>+1)·<span class="m">e</span><sup>−(<span class="m">n</span>+1)</sup> = −2<span class="m">e</span><sup>−2</sup></span>
+            <span class="why">令 <span class="m">w</span> = −(<span class="m">n</span>+1)，上式正是 <span class="m">w</span>·<span class="m">e</span><sup><span class="m">w</span></sup> = −2<span class="m">e</span><sup>−2</sup>。</span>
+          </li>
+          <li>注意右边 <span class="m">a</span> = −2<span class="m">e</span><sup>−2</sup> ≈ −0.2707 落在 (−1/<span class="m">e</span>, 0) 内（−1/<span class="m">e</span> ≈ −0.3679），所以 W 在这里有<b>两个</b>值。</li>
+          <li>解出两种可能：
+            <span class="formula"><span class="m">w</span><sub>1</sub> = <span class="m">W</span><sub>−1</sub>(−2<span class="m">e</span><sup>−2</sup>) = −2　⟹　<span class="m">n</span> + 1 = 2　⟹　<span class="key">n = 1</span></span>
+            <span class="formula"><span class="m">w</span><sub>2</sub> = <span class="m">W</span><sub>0</sub>(−2<span class="m">e</span><sup>−2</sup>) ≈ −0.40638　⟹　<span class="m">n</span> + 1 ≈ 0.40638　⟹　<span class="m">n</span> ≈ −0.59362</span>
+            <span class="why">第一个之所以恰好是 −2，是因为 (−2)·<span class="m">e</span><sup>−2</sup> 本来就等于 −2<span class="m">e</span><sup>−2</sup>，一眼能看出。第二个只能靠 W 算出来。</span>
+          </li>
+          <li>分别回代 ① 求 <span class="m">m</span>：
+            <span class="why">· <span class="m">n</span> = 1：<span class="m">m</span> = 2 + 4<span class="m">e</span><sup>−2</sup> − 4<span class="m">e</span><sup>−2</sup> = 2 ✔ 是整数；<br>
+              · <span class="m">n</span> ≈ −0.59362：<span class="m">m</span> = 2 + 4<span class="m">e</span><sup>−2</sup> − 4<span class="m">e</span><sup>0.40638</sup> ≈ −0.1229 ✘ 但 <span class="m">n</span> 不是整数，被题目排除。</span>
+          </li>
+        </ol>
+        <div class="tip"><b>大白话：</b>官方答案用"试整数"过关；W 函数的好处是<b>把方程彻底解出来</b>——它告诉我们实数范围内其实有<b>两组</b>解，只是第二组的 <span class="m">n</span> 不是整数，所以不符合题目要求。</div>
+        <div class="note"><b>彩蛋：</b>被淘汰的那个 <span class="m">n</span> ≈ −0.59362，正好等于第 2 问里极小值点的横坐标 <span class="m">x</span><sub>1</sub> ≈ −0.59362。原因是它们归根到底是同一个方程 <span class="m">u</span>·<span class="m">e</span><sup>−<span class="m">u</span></sup> = 2<span class="m">e</span><sup>−2</sup>（把 <span class="m">u</span> 换成 <span class="m">n</span>+1 或 <span class="m">x</span>+1 而已）。</div>
+        <div class="concl"><b>结论：</b>实数范围内有两组解，但题设 <span class="m">n</span> 为整数，故只有 <span class="m">n</span> = 1，<span class="m">m</span> = 2。</div>
+      </article>
+    </div>
+
+    <!-- ---------------- 第 2 问 ---------------- -->
+    <div class="view" data-view="2">
+      <div class="seg" data-seg="2">
+        <button data-m="a" class="on">官方答案（二阶导卡值）</button>
+        <button data-m="b">凸函数解法</button>
+      </div>
+
+      <article class="card sol" data-panel="2a">
+        <h3>不算出零点，只要"最大值是正的"</h3>
+        <p class="lead">官方解法 · 极值点个数 = 导数变号零点的个数。<span class="m">f</span>′(<span class="m">x</span>) = 0 解不出来，那就先研究它自己的最大值。</p>
+        <ol class="steps">
+          <li>由第 1 问，<span class="m">f</span>(<span class="m">x</span>) = <span class="m">x</span><sup>2</sup> + 2<span class="m">x</span> − 4<span class="m">e</span><sup><span class="m">x</span>−1</sup>，求导：
+            <span class="formula"><span class="m">f</span>′(<span class="m">x</span>) = 2<span class="m">x</span> + 2 − 4<span class="m">e</span><sup><span class="m">x</span>−1</sup></span>
+          </li>
+          <li>记 <span class="m">h</span>(<span class="m">x</span>) = <span class="m">f</span>′(<span class="m">x</span>)，再求一次导（这就是"二阶导"）：
+            <span class="formula"><span class="m">h</span>′(<span class="m">x</span>) = 2 − 4<span class="m">e</span><sup><span class="m">x</span>−1</sup> = 0　⟹　<span class="m">e</span><sup><span class="m">x</span>−1</sup> = <span class="frac"><span class="num">1</span><span class="den">2</span></span>　⟹　<span class="m">x</span> = 1 − ln 2 ≈ 0.3069</span>
+          </li>
+          <li>看 <span class="m">h</span>′ 的符号：<span class="m">x</span> &lt; 1 − ln 2 时 <span class="m">h</span>′ &gt; 0，<span class="m">x</span> &gt; 1 − ln 2 时 <span class="m">h</span>′ &lt; 0。<br>
+            <span class="why">所以 <span class="m">h</span>（也就是 <span class="m">f</span>′）在 (−∞, 1−ln2] 上递增、在 [1−ln2, +∞) 上递减——"先升后降"，只有一个最高点。</span></li>
+          <li><b>卡值</b>（关键一步）：算出最高点的值
+            <span class="formula"><span class="m">h</span>(1 − ln 2) = 2(1 − ln 2) + 2 − 4·<span class="frac"><span class="num">1</span><span class="den">2</span></span> = 2(1 − ln 2) ≈ <span class="grn">0.6137 &gt; 0</span></span>
+          </li>
+          <li>看两端：<span class="m">x</span> → −∞ 时 2<span class="m">x</span>+2 → −∞（指数项趋于 0），<span class="m">h</span> → −∞；<span class="m">x</span> → +∞ 时 −4<span class="m">e</span><sup><span class="m">x</span>−1</sup> 占主导，<span class="m">h</span> → −∞。
+            <span class="why">"两端都是负的，中间最高点却是正的"——由零点存在定理，左右各出现一个零点，一共 2 个。</span></li>
+          <li>两个零点处 <span class="m">f</span>′ 都改变符号（左端从负变正、右端从正变负），所以确实是极值点。</li>
+        </ol>
+        <div class="tip"><b>大白话：</b>这叫"卡值"。我们并不需要知道零点具体在哪（那个方程解不出精确值），只要证明"导数的最大值大于 0、两端小于 0"，就能断定导数穿过横轴<b>两次</b>。</div>
+        <div class="concl"><b>结论：</b><span class="m">f</span>(<span class="m">x</span>) 恰有 <b>2</b> 个极值点：<span class="m">x</span><sub>1</sub> ≈ −0.5936（极小值点）、<span class="m">x</span><sub>2</sub> = 1（极大值点）。</div>
+      </article>
+
+      <article class="card sol" data-panel="2b" hidden>
+        <h3>用"凸性"两头一夹</h3>
+        <p class="lead">凸函数解法 · 用 <span class="m">e</span><sup><span class="m">x</span></sup> 的切线不等式判断符号，用 <span class="m">f</span>′ 的上凸性限制零点个数。</p>
+        <ol class="steps">
+          <li><span class="m">e</span><sup><span class="m">t</span></sup> 是凸函数，图像永远在它的切线上方（只在切点处相等）。取 <span class="m">t</span> = <span class="m">x</span> − 1 在 <span class="m">t</span> = 0 处的切线：
+            <span class="formula"><span class="m">e</span><sup><span class="m">x</span>−1</sup> ≥ 1 + (<span class="m">x</span> − 1) = <span class="m">x</span>，等号仅在 <span class="m">x</span> = 1 时成立</span>
+          </li>
+          <li>代进导数，一次就把右边的符号管住了：
+            <span class="formula"><span class="m">f</span>′(<span class="m">x</span>) = 2<span class="m">x</span> + 2 − 4<span class="m">e</span><sup><span class="m">x</span>−1</sup> ≤ 2<span class="m">x</span> + 2 − 4<span class="m">x</span> = 2 − 2<span class="m">x</span></span>
+            <span class="why">所以 <span class="m">x</span> ≥ 1 时 <span class="m">f</span>′ ≤ 2 − 2<span class="m">x</span> ≤ 0，且只有 <span class="m">x</span> = 1 取到 0：右侧的零点就是 <span class="m">x</span> = 1。</span>
+          </li>
+          <li>再找左边的零点：<span class="m">f</span>′(0) = 2 − 4/<span class="m">e</span> ≈ 0.5285 &gt; 0（因为 <span class="m">e</span> &gt; 2），<span class="m">f</span>′(−1) = −4<span class="m">e</span><sup>−2</sup> &lt; 0。
+            <span class="why">由零点存在定理，(−1, 0) 内至少还有一个零点（实际在 <span class="m">x</span><sub>1</sub> ≈ −0.5936）。</span></li>
+          <li>再加一个"上限"：<span class="m">f</span>″(<span class="m">x</span>) = 2 − 4<span class="m">e</span><sup><span class="m">x</span>−1</sup> 是严格递减的，所以 <span class="m">f</span>′ 严格上凸。
+            <span class="why">严格上凸的函数与横轴最多交 2 次——如果交了 3 次，中间那一段就会"凸"出来，与上凸矛盾。</span></li>
+          <li>合起来：至少 2 个零点、至多 2 个零点，所以<b>恰好 2 个</b>，且都在两侧变号。</li>
+        </ol>
+        <div class="tip"><b>大白话：</b>"<span class="m">e</span><sup><span class="m">x</span></sup> 在切线上方"是凸函数最常用的一句话，考试可以当结论用；"上凸函数与横轴最多交 2 次"是这套解法的骨架。它和官方解法结论完全一样，只是一个靠"卡最大值"，一个靠"卡形状"。</div>
+        <div class="concl"><b>结论：</b>与官方解法一致，<span class="m">f</span>(<span class="m">x</span>) 恰有 <b>2</b> 个极值点。</div>
+      </article>
+    </div>
+
+    <!-- ---------------- 第 3 问 ---------------- -->
+    <div class="view" data-view="3">
+      <article class="card sol">
+        <h3>除以 <span class="m">x</span>，把方程"变成一个函数"</h3>
+        <p class="lead">比值函数法 · 把交点方程两边除以 <span class="m">x</span>，右边得到一个关于 <span class="m">x</span> 的函数 <span class="m">G</span>(<span class="m">x</span>)；交点个数 = 水平线 <span class="m">y</span> = <span class="m">k</span> 与 <span class="m">G</span>(<span class="m">x</span>) 的交点个数。</p>
+        <ol class="steps">
+          <li>写出交点方程，并把常数项配成完全平方，让式子"整块"起来：
+            <span class="formula"><span class="m">x</span><sup>2</sup> + 2<span class="m">x</span> − 4<span class="m">e</span><sup><span class="m">x</span>−1</sup> = <span class="m">kx</span> − 1　⟺　(<span class="m">x</span>+1)<sup>2</sup> − 4<span class="m">e</span><sup><span class="m">x</span>−1</sup> = <span class="m">kx</span></span>
+            记 <span class="m">F</span>(<span class="m">x</span>) = (<span class="m">x</span>+1)<sup>2</sup> − 4<span class="m">e</span><sup><span class="m">x</span>−1</sup>。
+          </li>
+          <li>先确认 <span class="m">x</span> = 0 不是解：<span class="m">F</span>(0) = 1 − 4/<span class="m">e</span> ≈ −0.47 ≠ 0。所以可以放心两边除以 <span class="m">x</span>：
+            <span class="formula" style="text-align:center;font-size:18px;"><span class="m">k</span> = <span class="frac"><span class="num"><span class="m">F</span>(<span class="m">x</span>)</span><span class="den"><span class="m">x</span></span></span> =: <span class="m">G</span>(<span class="m">x</span>)　(<span class="m">x</span> ≠ 0)</span>
+          </li>
+          <li><b>先看 <span class="m">x</span> &gt; 0：一个交点也没有。</b>注意到
+            <span class="formula"><span class="m">F</span>′(<span class="m">x</span>) = 2<span class="m">x</span> + 2 − 4<span class="m">e</span><sup><span class="m">x</span>−1</sup> = <span class="m">f</span>′(<span class="m">x</span>)</span>
+            <span class="why">这正是第 2 问研究过的导数！由第 2 问：<span class="m">f</span>′ 在 (<span class="m">x</span><sub>1</sub>, 1) 上为正、在 (1, +∞) 上为负（而 <span class="m">x</span><sub>1</sub> ≈ −0.59 &lt; 0）。<br>
+              所以 <span class="m">F</span> 在 (0, 1) 上递增、在 (1, +∞) 上递减，最大值是 <span class="m">F</span>(1) = 4 − 4 = <b>0</b>。<br>
+              于是 <span class="m">x</span> &gt; 0 时 <span class="m">F</span>(<span class="m">x</span>) ≤ 0，从而 <span class="m">G</span>(<span class="m">x</span>) = <span class="m">F</span>(<span class="m">x</span>)/<span class="m">x</span> ≤ 0 &lt; <span class="m">k</span>——不可能相等。</span>
+          </li>
+          <li><b>再看 <span class="m">x</span> &lt; 0：恰好一个交点。</b>先算 <span class="m">G</span> 的导数：
+            <span class="formula" style="text-align:center;"><span class="m">G</span>′(<span class="m">x</span>) = <span class="frac"><span class="num"><span class="m">xF</span>′(<span class="m">x</span>) − <span class="m">F</span>(<span class="m">x</span>)</span><span class="den"><span class="m">x</span><sup>2</sup></span></span> = <span class="frac"><span class="num"><span class="m">x</span><sup>2</sup> − 1 + 4<span class="m">e</span><sup><span class="m">x</span>−1</sup>(1 − <span class="m">x</span>)</span><span class="den"><span class="m">x</span><sup>2</sup></span></span></span>
+            令 <span class="m">u</span> = −<span class="m">x</span> &gt; 0，分子变成 <span class="m">P</span>(<span class="m">u</span>) = <span class="m">u</span><sup>2</sup> − 1 + 4(<span class="m">u</span>+1)<span class="m">e</span><sup>−<span class="m">u</span>−1</sup>。
+          </li>
+          <li>判断 <span class="m">P</span> 的正负：
+            <span class="formula"><span class="m">P</span>′(<span class="m">u</span>) = 2<span class="m">u</span>(1 − 2<span class="m">e</span><sup>−<span class="m">u</span>−1</sup>) &gt; 0　(<span class="m">u</span> &gt; 0 时 2<span class="m">e</span><sup>−<span class="m">u</span>−1</sup> &lt; 2/<span class="m">e</span> &lt; 1)</span>
+            <span class="formula"><span class="m">P</span>(0) = 4/<span class="m">e</span> − 1 ≈ 0.4715 &gt; 0</span>
+            <span class="why">所以 <span class="m">P</span>(<span class="m">u</span>) &gt; 0，即 <span class="m">G</span>′(<span class="m">x</span>) &gt; 0：<span class="m">G</span> 在 (−∞, 0) 上<b>严格递增</b>。</span>
+          </li>
+          <li>看两端的走向：<span class="m">x</span> → −∞ 时 <span class="m">F</span>(<span class="m">x</span>) ≈ <span class="m">x</span><sup>2</sup>，所以 <span class="m">G</span>(<span class="m">x</span>) ≈ <span class="m">x</span> → −∞；<span class="m">x</span> → 0<sup>−</sup> 时分子 <span class="m">F</span>(0) &lt; 0、分母 <span class="m">x</span> &lt; 0，所以 <span class="m">G</span>(<span class="m">x</span>) → +∞。
+            <span class="why">一个从 −∞ 升到 +∞ 的连续递增函数，和任意高度 <span class="m">k</span> &gt; 0 的水平线<b>只交一次</b>：存在唯一的 <span class="m">x</span><sub>0</sub> &lt; 0 使 <span class="m">G</span>(<span class="m">x</span><sub>0</sub>) = <span class="m">k</span>。</span>
+          </li>
+        </ol>
+        <div class="ratio-box">
+          <p class="cap">比值函数 <span class="m">G</span>(<span class="m">x</span>) = [(<span class="m">x</span>+1)<sup>2</sup> − 4<span class="m">e</span><sup><span class="m">x</span>−1</sup>]/<span class="m">x</span> 的图像（<span class="m">x</span> &lt; 0），紫线为 <span class="m">y</span> = <span class="m">k</span>：</p>
+          <canvas id="ratio"></canvas>
+        </div>
+        <div class="tip"><b>大白话：</b>为什么叫"比值函数"？因为把方程除以 <span class="m">x</span> 之后，等号右边是"两个式子相除"。它的单调性只要算一次导数就看得出来，比反复讨论二次导数省力得多。</div>
+        <div class="note"><b>图形直觉：</b>所有直线 <span class="m">y</span> = <span class="m">kx</span> − 1 都经过同一个定点 (0, −1)；而曲线在 <span class="m">x</span> &gt; 0 的部分始终被它"压"在下面，所以交点只能出现在 <span class="m">x</span> &lt; 0 的一侧，而且只有一处。</div>
+        <div class="concl"><b>结论：</b>当 <span class="m">k</span> &gt; 0 时，直线 <span class="m">y</span> = <span class="m">kx</span> − 1 与曲线 <span class="m">y</span> = <span class="m">f</span>(<span class="m">x</span>) <b>恰有 1 个公共点</b>，且交点横坐标恒为负数。</div>
+      </article>
+    </div>
+
+  </section>
+
+  <!-- ================= 右栏 ================= -->
+  <section class="right">
+    <div class="card plot-card">
+      <div class="plot-head">
+        <div class="t" id="plotTitle">第 1 问 · 切线与切点<span>曲线 y = f(x) 与给定切线，拖动 / 滚轮可自由查看</span></div>
+        <div class="tools">
+          <button id="toggleDF" class="wide" title="显示 / 隐藏导函数 f′(x)" style="display:none">显示 f′</button>
+          <button id="zoomIn" title="放大">＋</button>
+          <button id="zoomOut" title="缩小">－</button>
+          <button id="reset" title="重置视图" class="wide">重置</button>
+        </div>
+      </div>
+      <div class="stage">
+        <canvas id="plot"></canvas>
+        <div class="readout" id="readout">把鼠标移到图上可读坐标</div>
+        <div class="hint">按住拖动平移 · 滚轮缩放 · 双指捏合</div>
+      </div>
+      <div class="foot">
+        <div class="legend on" data-leg="1">
+          <span><i style="border-color:var(--curve)"></i>曲线 <span class="m">y</span> = <span class="m">f</span>(<span class="m">x</span>)</span>
+          <span><i style="border-color:var(--tangent)"></i>切线 4<span class="m">x</span> + <span class="m">e</span><sup>2</sup><span class="m">y</span> + <span class="m">e</span><sup>2</sup> + 8 = 0</span>
+          <span><span class="dot" style="background:var(--point)"></span>切点 (−1, −1.5413)</span>
+        </div>
+        <div class="legend" data-leg="2">
+          <span><i style="border-color:var(--curve)"></i>曲线 <span class="m">y</span> = <span class="m">f</span>(<span class="m">x</span>)</span>
+          <span><i style="border-color:var(--tangent);border-top-style:dashed"></i>导函数 <span class="m">f</span>′(<span class="m">x</span>)</span>
+          <span><span class="dot" style="background:var(--crit)"></span>极值点（共 2 个）</span>
+        </div>
+        <div class="legend" data-leg="3">
+          <span><i style="border-color:var(--curve)"></i>曲线 <span class="m">y</span> = <span class="m">f</span>(<span class="m">x</span>)</span>
+          <span><i style="border-color:var(--kline)"></i>直线 <span class="m">y</span> = <span class="m">kx</span> − 1</span>
+          <span><span class="dot" style="background:var(--point)"></span>唯一公共点</span>
+          <span><span class="dot" style="background:#94a3b8"></span>定点 (0, −1)</span>
+        </div>
+        <div class="kctl" id="kctl">
+          <label>k =</label>
+          <input type="range" id="krange" min="0.02" max="4" step="0.01" value="1">
+          <span class="kval" id="kval">1.00</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="page-foot">
+  <span>2026 年北京高考数学 · 第 20 题　交互式讲解</span>
+  <span>制作：Shiyuan</span>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ================= 函数 ================= */
+  var E = Math.E, E2 = E*E;
+  var f    = function(x){ return x*x + 2*x - 4*Math.exp(x-1); };
+  var df   = function(x){ return 2*x + 2 - 4*Math.exp(x-1); };
+  var F    = function(x){ return (x+1)*(x+1) - 4*Math.exp(x-1); };
+  var Gf   = function(x){ return F(x)/x; };
+  var TAN_M = -4/E2;                 // 切线斜率
+  var TAN_B = -1 - 8/E2;             // 切线截距
+  var X1 = -0.59362426004;           // 极小值点
+  var X2 = 1;                        // 极大值点
+  var FX1 = f(X1), FX2 = f(X2);
+
+  /* ================= 状态 ================= */
+  var state = { tab:1, method:{1:'a',2:'a'}, k:1, showDF:true };
+  var view = { wx:0, wy:-1.6, s:56 };
+
+  var cvs = document.getElementById('plot');
+  var ctx = cvs.getContext('2d');
+  var W = 0, H = 0, DPR = 1;
+
+  /* ================= 坐标变换 ================= */
+  function X(wx){ return W/2 + (wx - view.wx) * view.s; }
+  function Y(wy){ return H/2 - (wy - view.wy) * view.s; }
+  function wxAt(sx){ return view.wx + (sx - W/2) / view.s; }
+  function wyAt(sy){ return view.wy - (sy - H/2) / view.s; }
+
+  function resize(){
+    DPR = Math.max(1, Math.min(2.5, window.devicePixelRatio || 1));
+    var r = cvs.parentNode.getBoundingClientRect();
+    W = Math.max(200, Math.round(r.width));
+    H = Math.max(200, Math.round(r.height));
+    cvs.width = Math.round(W*DPR); cvs.height = Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    draw();
+  }
+  function defaultView(){
+    var s = Math.min(W/12.6, H/10.4);
+    view.s = Math.max(18, s);
+    view.wx = 0; view.wy = -1.7;
+  }
+  function zoomAt(sx, sy, factor){
+    var before = { x: wxAt(sx), y: wyAt(sy) };
+    view.s = Math.max(6, Math.min(2400, view.s * factor));
+    var after = { x: wxAt(sx), y: wyAt(sy) };
+    view.wx += before.x - after.x;
+    view.wy += before.y - after.y;
+    draw();
+  }
+  function pan(dx, dy){
+    view.wx -= dx / view.s;
+    view.wy += dy / view.s;
+    draw();
+  }
+
+  /* ================= 绘图工具 ================= */
+  function fmt(v, step){
+    if (Math.abs(v) < 1e-9) return '0';
+    var d = 0;
+    if (step < 2) d = 1;
+    if (step < 0.5) d = 2;
+    var s = v.toFixed(d);
+    if (s.indexOf('.') >= 0) s = s.replace(/0+$/,'').replace(/\.$/,'');
+    return s;
+  }
+  function niceStep(){
+    var step = 1;
+    var guard = 0;
+    while (view.s*step < 58 && guard++ < 40) step *= 2;
+    guard = 0;
+    while (view.s*step > 150 && guard++ < 40) step /= 2;
+    return step;
+  }
+  function gridStep(){ return niceStep(); }
+
+  function drawGrid(){
+    var step = gridStep();
+    var minor = step/2;
+    var x0 = wxAt(0), x1 = wxAt(W), y0 = wyAt(H), y1 = wyAt(0);
+
+    // 次网格
+    ctx.strokeStyle = '#f2f5fa'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    var i, v;
+    for (i = Math.ceil(x0/minor); i*minor <= x1; i++){ v = X(i*minor); ctx.moveTo(v,0); ctx.lineTo(v,H); }
+    for (i = Math.ceil(y0/minor); i*minor <= y1; i++){ v = Y(i*minor); ctx.moveTo(0,v); ctx.lineTo(W,v); }
+    ctx.stroke();
+
+    // 主网格
+    ctx.strokeStyle = '#e7ecf4'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (i = Math.ceil(x0/step); i*step <= x1; i++){ v = X(i*step); ctx.moveTo(v,0); ctx.lineTo(v,H); }
+    for (i = Math.ceil(y0/step); i*step <= y1; i++){ v = Y(i*step); ctx.moveTo(0,v); ctx.lineTo(W,v); }
+    ctx.stroke();
+
+    // 坐标轴
+    var ax = Math.min(Math.max(X(0), 0.5), W-0.5);
+    var ay = Math.min(Math.max(Y(0), 0.5), H-0.5);
+    ctx.strokeStyle = '#9aa7b8'; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(0, ay); ctx.lineTo(W, ay); ctx.moveTo(ax, 0); ctx.lineTo(ax, H); ctx.stroke();
+
+    // 刻度标签
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '12px "Cambria Math", Georgia, serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    for (i = Math.ceil(x0/step); i*step <= x1; i++){
+      if (i === 0) continue;
+      v = X(i*step);
+      ctx.fillText(fmt(i*step, step), v, ay + 5);
+    }
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    for (i = Math.ceil(y0/step); i*step <= y1; i++){
+      if (i === 0) continue;
+      v = Y(i*step);
+      ctx.fillText(fmt(i*step, step), ax - 6, v);
+    }
+  }
+
+  function drawCurve(fn, color, width, dash){
+    ctx.save();
+    ctx.beginPath(); ctx.rect(-40,-40,W+80,H+80); ctx.clip();
+    ctx.strokeStyle = color; ctx.lineWidth = width;
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    if (dash) ctx.setLineDash(dash);
+    ctx.beginPath();
+    var started = false;
+    for (var sx = -2; sx <= W+2; sx += 1){
+      var x = wxAt(sx), y = fn(x);
+      if (!isFinite(y)) { started = false; continue; }
+      var sy = H/2 - (y - view.wy)*view.s;
+      if (sy < -1e6) sy = -1e6;
+      if (sy > 1e6) sy = 1e6;
+      if (!started){ ctx.moveTo(sx, sy); started = true; }
+      else ctx.lineTo(sx, sy);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawLine(m, b, color, dash){
+    ctx.save();
+    ctx.beginPath(); ctx.rect(-40,-40,W+80,H+80); ctx.clip();
+    ctx.strokeStyle = color; ctx.lineWidth = 1.8;
+    if (dash) ctx.setLineDash(dash);
+    var xa = wxAt(-4), xb = wxAt(W+4);
+    ctx.beginPath();
+    ctx.moveTo(X(xa), Y(m*xa + b));
+    ctx.lineTo(X(xb), Y(m*xb + b));
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function label(text, sx, sy, color, dx, dy, align){
+    ctx.font = '600 12.5px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign = align || 'left'; ctx.textBaseline = 'middle';
+    ctx.lineWidth = 3.5; ctx.strokeStyle = 'rgba(255,255,255,.95)';
+    ctx.strokeText(text, sx + (dx||10), sy + (dy||0));
+    ctx.fillStyle = color;
+    ctx.fillText(text, sx + (dx||10), sy + (dy||0));
+  }
+
+  function dot(x, y, color, r){
+    var sx = X(x), sy = Y(y);
+    ctx.beginPath(); ctx.arc(sx, sy, (r||5)+2.5, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(sx, sy, (r||5), 0, Math.PI*2);
+    ctx.fillStyle = color; ctx.fill();
+  }
+  function guide(x){
+    ctx.save();
+    ctx.setLineDash([4,4]); ctx.strokeStyle = 'rgba(15,179,137,.5)'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(X(x), 0); ctx.lineTo(X(x), H); ctx.stroke();
+    ctx.restore();
+  }
+
+  /* ================= 交点求解（二分法） ================= */
+  function solveK(k){
+    var lo = -60, hi = -1e-5;
+    for (var i=0;i<200;i++){
+      var mid = (lo+hi)/2;
+      if (Gf(mid) > k) hi = mid; else lo = mid;
+    }
+    return (lo+hi)/2;
+  }
+
+  /* ================= 主绘图 ================= */
+  function draw(){
+    if (!W || !H) return;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,W,H);
+    drawGrid();
+
+    var t = state.tab;
+
+    if (t === 1){
+      drawCurve(f, '#2f6bff', 2.4);
+      drawLine(TAN_M, TAN_B, '#f0913a');
+      dot(-1, f(-1), '#ef476f', 5.5);
+      label('切点 (−1, −1.5413)', X(-1), Y(f(-1)), '#d6336c', 12, -14);
+      label('切线 4x + e²y + e² + 8 = 0', X(-4.6), Y(TAN_M*(-4.6)+TAN_B), '#c97a22', 8, 16);
+    }
+
+    if (t === 2){
+      if (state.showDF) drawCurve(df, '#f0913a', 2, [7,6]);
+      drawCurve(f, '#2f6bff', 2.4);
+      guide(X1); guide(X2);
+      dot(X1, FX1, '#0fb389', 5.5);
+      dot(X2, FX2, '#0fb389', 5.5);
+      label('极小值点 x₁ ≈ −0.5936', X(X1), Y(FX1), '#0d8f6b', 12, 16);
+      label('极大值点 x₂ = 1', X(X2), Y(FX2), '#0d8f6b', 12, -14);
+      label('f′(x) 的最高点 2(1−ln2) ≈ 0.6137 > 0', X(1-Math.log(2)), Y(df(1-Math.log(2))), '#c97a22', 10, -14);
+      dot(1-Math.log(2), df(1-Math.log(2)), '#f0913a', 4);
+    }
+
+    if (t === 3){
+      var k = state.k;
+      drawCurve(f, '#2f6bff', 2.4);
+      drawLine(k, -1, '#a855f7');
+      dot(0, -1, '#94a3b8', 4.5);
+      label('定点 (0, −1)', X(0), Y(-1), '#64748b', 10, 17);
+      var x0 = solveK(k);
+      dot(x0, k*x0-1, '#ef476f', 5.5);
+      var right = X(x0) > W - 170;
+      label('唯一公共点 (' + x0.toFixed(2) + ', ' + (k*x0-1).toFixed(2) + ')',
+            X(x0), Y(k*x0-1), '#d6336c', right ? -14 : 14, -15, right ? 'right' : 'left');
+      label('y = ' + k.toFixed(2) + 'x − 1', X(-5.2), Y(k*(-5.2)-1), '#8b3fd6', 8, 15);
+    }
+  }
+
+  /* ================= 比值函数小图 ================= */
+  var rcvs = document.getElementById('ratio');
+  var rctx = rcvs.getContext('2d');
+  var RW=0, RH=0;
+  function resizeRatio(){
+    var r = rcvs.getBoundingClientRect();
+    RW = Math.max(120, Math.round(r.width));
+    RH = Math.max(80, Math.round(r.height));
+    rcvs.width = Math.round(RW*DPR); rcvs.height = Math.round(RH*DPR);
+    rctx.setTransform(DPR,0,0,DPR,0,0);
+    drawRatio();
+  }
+  function drawRatio(){
+    if (!RW || !RH) return;
+    var padL = 34, padR = 12, padT = 12, padB = 20;
+    var xmin = -6, xmax = -0.02, ymin = -9, ymax = 11;
+    var px = function(x){ return padL + (x - xmin)/(xmax-xmin)*(RW-padL-padR); };
+    var py = function(y){ return RH-padB - (y - ymin)/(ymax-ymin)*(RH-padT-padB); };
+
+    rctx.clearRect(0,0,RW,RH);
+    rctx.fillStyle = '#fbfcfe'; rctx.fillRect(0,0,RW,RH);
+
+    rctx.strokeStyle = '#eef2f8'; rctx.lineWidth = 1;
+    rctx.beginPath();
+    for (var gx=-6; gx<=0; gx++){ rctx.moveTo(px(gx), padT); rctx.lineTo(px(gx), RH-padB); }
+    for (var gy=-8; gy<=10; gy+=2){ rctx.moveTo(padL, py(gy)); rctx.lineTo(RW-padR, py(gy)); }
+    rctx.stroke();
+
+    // 轴
+    rctx.strokeStyle = '#c3cedd'; rctx.lineWidth = 1.2;
+    rctx.beginPath();
+    rctx.moveTo(padL, py(0)); rctx.lineTo(RW-padR, py(0));
+    rctx.moveTo(px(xmin), padT); rctx.lineTo(px(xmin), RH-padB);
+    rctx.stroke();
+
+    // y=k
+    var k = state.k;
+    rctx.save();
+    rctx.setLineDash([6,5]); rctx.strokeStyle = '#a855f7'; rctx.lineWidth = 1.8;
+    rctx.beginPath(); rctx.moveTo(padL, py(k)); rctx.lineTo(RW-padR, py(k)); rctx.stroke();
+    rctx.restore();
+
+    // G(x) 曲线
+    rctx.save();
+    rctx.beginPath(); rctx.rect(padL, padT, RW-padL-padR, RH-padT-padB); rctx.clip();
+    rctx.strokeStyle = '#2f6bff'; rctx.lineWidth = 2.2; rctx.lineJoin='round';
+    rctx.beginPath();
+    var started = false;
+    for (var i=0;i<=500;i++){
+      var x = xmin + (xmax-xmin)*i/500;
+      var y = Gf(x);
+      if (!isFinite(y) || y > 400 || y < -400){ started=false; continue; }
+      if (!started){ rctx.moveTo(px(x), py(y)); started = true; }
+      else rctx.lineTo(px(x), py(y));
+    }
+    rctx.stroke();
+    rctx.restore();
+
+    // 交点
+    var x0 = solveK(k);
+    if (x0 > xmin){
+      rctx.beginPath(); rctx.arc(px(x0), py(k), 6, 0, Math.PI*2);
+      rctx.fillStyle = 'rgba(255,255,255,.95)'; rctx.fill();
+      rctx.beginPath(); rctx.arc(px(x0), py(k), 4, 0, Math.PI*2);
+      rctx.fillStyle = '#ef476f'; rctx.fill();
+    }
+
+    rctx.fillStyle = '#94a3b8';
+    rctx.font = '11px "Cambria Math", Georgia, serif';
+    rctx.textAlign = 'right'; rctx.textBaseline = 'middle';
+    rctx.fillText('k', padL-7, py(k));
+    rctx.textAlign = 'center'; rctx.textBaseline = 'top';
+    rctx.fillText('−6', px(-6), RH-padB+4);
+    rctx.fillText('−3', px(-3), RH-padB+4);
+    rctx.fillText('0', px(0)-2, RH-padB+4);
+    rctx.textAlign = 'left'; rctx.textBaseline = 'top';
+    rctx.font = '600 11.5px -apple-system,"PingFang SC",sans-serif';
+    rctx.fillStyle = '#2f6bff';
+    rctx.fillText('G(x) = F(x)/x　（x < 0 时严格递增）', padL+4, padT+2);
+  }
+
+  /* ================= 交互 ================= */
+  var ptrs = new Map();
+  function localPos(e){
+    var r = cvs.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+  cvs.addEventListener('pointerdown', function(e){
+    cvs.setPointerCapture(e.pointerId);
+    ptrs.set(e.pointerId, localPos(e));
+    cvs.classList.add('grabbing');
+  });
+  cvs.addEventListener('pointermove', function(e){
+    var p = localPos(e);
+    var prev = ptrs.get(e.pointerId);
+    if (prev){
+      if (ptrs.size === 1){
+        pan(p.x - prev.x, p.y - prev.y);
+      } else if (ptrs.size === 2){
+        var other = null;
+        ptrs.forEach(function(v, id){ if (id !== e.pointerId) other = v; });
+        if (other){
+          var dPrev = Math.hypot(prev.x-other.x, prev.y-other.y);
+          var dNow  = Math.hypot(p.x-other.x, p.y-other.y);
+          if (dPrev > 6) zoomAt((p.x+other.x)/2, (p.y+other.y)/2, dNow/dPrev);
+        }
+      }
+      ptrs.set(e.pointerId, p);
+    }
+    updateReadout(p.x, p.y);
+  }, { passive:true });
+  function release(e){ ptrs.delete(e.pointerId); if (!ptrs.size) cvs.classList.remove('grabbing'); }
+  cvs.addEventListener('pointerup', release);
+  cvs.addEventListener('pointercancel', release);
+  cvs.addEventListener('pointerleave', function(e){ updateReadout(null); });
+
+  cvs.addEventListener('wheel', function(e){
+    e.preventDefault();
+    var p = localPos(e);
+    zoomAt(p.x, p.y, Math.exp(-e.deltaY * 0.0016));
+  }, { passive:false });
+
+  function updateReadout(sx, sy){
+    var el = document.getElementById('readout');
+    if (sx === null){ el.textContent = '把鼠标移到图上可读坐标'; return; }
+    el.textContent = 'x = ' + wxAt(sx).toFixed(2) + '　y = ' + wyAt(sy).toFixed(2);
+  }
+
+  document.getElementById('zoomIn').onclick = function(){ zoomAt(W/2, H/2, 1.25); };
+  document.getElementById('zoomOut').onclick = function(){ zoomAt(W/2, H/2, 0.8); };
+  document.getElementById('reset').onclick = function(){ defaultView(); draw(); };
+
+  /* ================= 选项卡 ================= */
+  var titles = {
+    1:['第 1 问 · 切线与切点','曲线 y = f(x) 与给定切线，拖动 / 滚轮可自由查看'],
+    2:['第 2 问 · 导函数与极值点','虚线为 f′(x)，圆点为两个极值点'],
+    3:['第 3 问 · 直线 y = kx − 1 与曲线的公共点','拖动下方滑块改变 k，观察交点始终只有 1 个']
+  };
+  function setTab(t){
+    state.tab = t;
+    document.querySelectorAll('.tabs button').forEach(function(b){
+      b.classList.toggle('on', +b.dataset.q === t);
+    });
+    document.querySelectorAll('.view').forEach(function(v){
+      v.classList.toggle('on', +v.dataset.view === t);
+    });
+    document.querySelectorAll('.legend').forEach(function(l){
+      l.classList.toggle('on', +l.dataset.leg === t);
+    });
+    document.getElementById('kctl').classList.toggle('on', t === 3);
+    document.getElementById('toggleDF').style.display = (t === 2) ? '' : 'none';
+    document.getElementById('plotTitle').innerHTML = titles[t][0] + '<span>' + titles[t][1] + '</span>';
+    draw();
+    if (t === 3){ resizeRatio(); drawRatio(); }
+  }
+  document.querySelectorAll('.tabs button').forEach(function(b){
+    b.onclick = function(){ setTab(+b.dataset.q); };
+  });
+
+  document.getElementById('toggleDF').onclick = function(){
+    state.showDF = !state.showDF;
+    this.textContent = state.showDF ? '隐藏 f′' : '显示 f′';
+    draw();
+  };
+
+  // 解法切换（第 1、2 问）
+  document.querySelectorAll('.seg').forEach(function(seg){
+    var q = seg.dataset.seg;
+    seg.querySelectorAll('button').forEach(function(b){
+      b.onclick = function(){
+        seg.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+        b.classList.add('on');
+        var m = b.dataset.m;
+        document.querySelectorAll('.view[data-view="'+q+'"] [data-panel]').forEach(function(p){
+          p.hidden = (p.dataset.panel !== q + m);
+        });
+      };
+    });
+  });
+
+  // k 滑块
+  var krange = document.getElementById('krange');
+  var kval = document.getElementById('kval');
+  krange.oninput = function(){
+    state.k = parseFloat(krange.value);
+    kval.textContent = state.k.toFixed(2);
+    draw(); drawRatio();
+  };
+
+  /* ================= 初始化 ================= */
+  window.addEventListener('resize', function(){ resize(); resizeRatio(); });
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ resize(); }).observe(cvs.parentNode);
+  }
+  requestAnimationFrame(function(){
+    resize(); defaultView(); draw();
+    resizeRatio();
+  });
+})();
+</script>
+</body>
+</html>
