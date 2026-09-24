@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>2026 北京高考数学 · 第 20 题 交互演示</title>
+<style>
+  :root{
+    --bg:#f3f5f9; --card:#ffffff; --ink:#1d2433; --ink-2:#5b6474; --ink-3:#8a93a6;
+    --line:#e4e8f0; --blue:#0a84ff; --blue-soft:#e9f3ff;
+    --purple:#bf5af2; --purple-soft:#f6ecff; --orange:#ff9f0a; --orange-soft:#fff4e3;
+    --green:#30d158; --green-soft:#e9f9ef; --red:#ff453a; --red-soft:#ffeceb;
+    --radius:14px; --shadow:0 1px 2px rgba(16,24,40,.05),0 4px 16px rgba(16,24,40,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:var(--bg); color:var(--ink); overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* ---------- 顶栏 ---------- */
+  header{
+    height:60px; background:rgba(255,255,255,.82); backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:12px; padding:0 20px; flex:none;
+    position:relative; z-index:60;
+  }
+  .logo{
+    width:36px;height:36px;border-radius:10px;flex:none;
+    background:linear-gradient(135deg,#0a84ff 0%,#5e5ce6 100%);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 8px rgba(10,132,255,.35);
+  }
+  .logo svg{width:22px;height:22px;display:block}
+  .titles{display:flex;flex-direction:column;justify-content:center;line-height:1.25}
+  header h1{font-size:15.5px;font-weight:700;letter-spacing:.01em}
+  header .sub{font-size:12px;color:var(--ink-3)}
+  header .spacer{flex:1}
+  .badge{
+    font-size:12px;color:var(--blue);background:var(--blue-soft);
+    border:1px solid #cbe2ff;border-radius:999px;padding:4px 12px;white-space:nowrap;
+  }
+  /* ---------- 设置 ---------- */
+  .setbtn{
+    width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:#fff;
+    color:var(--ink-2);cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:all .15s;flex:none;
+  }
+  .setbtn svg{width:17px;height:17px;display:block}
+  .setbtn:hover{border-color:var(--blue);color:var(--blue);box-shadow:0 1px 4px rgba(10,132,255,.18)}
+  .setbtn.on{background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
+  .settings-pop{
+    position:absolute;top:52px;right:16px;width:288px;background:rgba(255,255,255,.96);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border:1px solid var(--line);border-radius:14px;
+    box-shadow:0 8px 30px rgba(16,24,40,.14),0 2px 6px rgba(16,24,40,.08);
+    padding:6px 0;opacity:0;transform:translateY(-6px) scale(.98);pointer-events:none;
+    transition:opacity .16s ease,transform .16s ease;z-index:70;
+  }
+  .settings-pop.open{opacity:1;transform:none;pointer-events:auto}
+  .settings-title{font-size:12.5px;font-weight:700;color:var(--ink-3);letter-spacing:.08em;padding:10px 16px 6px}
+  .switch-row{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:9px 16px;cursor:pointer;font-size:14px;border-radius:8px;transition:background .12s;
+  }
+  .switch-row:hover{background:#f5f7fb}
+  .switch-row .sr-sub{font-size:11.5px;color:var(--ink-3);margin-top:1px}
+  .switch{position:relative;width:44px;height:26px;flex:none}
+  .switch input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+  .switch i{
+    position:absolute;inset:0;border-radius:999px;background:#d5dae4;transition:background .18s;pointer-events:none;
+  }
+  .switch i::after{
+    content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 3px rgba(16,24,40,.28);transition:transform .18s;
+  }
+  .switch input:checked + i{background:#34c759}
+  .switch input:checked + i::after{transform:translateX(18px)}
+  .hidden-note{
+    display:none;background:var(--card);border:1px dashed #c9d2e2;border-radius:var(--radius);
+    padding:22px 18px;margin-bottom:14px;text-align:center;color:var(--ink-3);font-size:13px;line-height:1.9;
+  }
+  .hidden-note b{color:var(--blue);font-weight:600}
+  body.hide-steps #stepsCard, body.hide-steps #conclusion{display:none}
+  body.hide-steps .hidden-note{display:block}
+  /* ---------- 主布局 ---------- */
+  main{display:flex;height:calc(100% - 60px)}
+  aside{
+    width:470px;flex:none;background:var(--bg);
+    border-right:1px solid var(--line);overflow-y:auto;padding:18px 18px 30px;
+  }
+  aside::-webkit-scrollbar{width:8px}
+  aside::-webkit-scrollbar-thumb{background:#ccd3e0;border-radius:8px}
+  .stage{flex:1;display:flex;flex-direction:column;min-width:0;background:#fafbfe}
+  /* ---------- 卡片 ---------- */
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:16px 18px;margin-bottom:14px;
+  }
+  .problem-card{
+    background:linear-gradient(155deg,#ffffff 55%,#eef4ff 100%);
+    border-color:#dbe5f5;
+  }
+  .card h2{font-size:13px;font-weight:700;color:var(--ink-2);letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .card h2 .dot{width:7px;height:7px;border-radius:50%;background:var(--blue)}
+  /* ---------- 题目 ---------- */
+  .problem{font-size:14.5px;line-height:2}
+  .math{font-family:"Cambria Math",Georgia,"Times New Roman",STIXGeneral,serif;font-style:italic;letter-spacing:.01em}
+  sup,sub{font-size:.72em;line-height:0}
+  .frac{display:inline-flex;flex-direction:column;vertical-align:-0.55em;margin:0 .18em;text-align:center;font-size:.92em}
+  .frac>span:first-child{padding:0 .4em;border-bottom:1.4px solid currentColor;line-height:1.45}
+  .frac>span:last-child{padding:0 .4em;line-height:1.45}
+  .q-list{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:14px;line-height:1.9}
+  .q-list b{color:var(--blue)}
+  /* ---------- 分段控件 ---------- */
+  .seg{display:flex;background:#e9edf4;border-radius:11px;padding:3px;gap:3px;margin-bottom:14px}
+  .seg button{
+    flex:1;border:0;background:transparent;padding:9px 4px;border-radius:9px;
+    font-size:13.5px;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap;
+    transition:all .18s ease;font-family:inherit;
+  }
+  .seg button:hover{color:var(--ink)}
+  .seg button.on{background:#fff;color:var(--blue);box-shadow:0 1px 4px rgba(16,24,40,.12)}
+  .seg.purple button.on{color:var(--purple)}
+  .seg.method button.on{color:var(--ink);font-weight:700}
+  .method-note{font-size:12px;color:var(--ink-3);margin:-6px 0 12px;display:flex;align-items:center;gap:6px}
+  .method-note .tag{background:var(--purple-soft);color:var(--purple);border-radius:6px;padding:2px 8px;font-weight:600}
+  /* ---------- 解题步骤 ---------- */
+  .steps{list-style:none;counter-reset:step}
+  .steps li{
+    counter-increment:step;position:relative;padding:10px 12px 10px 44px;
+    font-size:13.8px;line-height:1.85;border-radius:10px;margin-bottom:6px;
+    transition:background .15s;
+  }
+  .steps li::before{
+    content:counter(step);position:absolute;left:10px;top:11px;
+    width:23px;height:23px;border-radius:50%;background:var(--blue-soft);color:var(--blue);
+    font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;font-style:normal;
+    transition:transform .15s;
+  }
+  .steps li:hover::before{transform:scale(1.08)}
+  .steps li.alt::before{background:var(--purple-soft);color:var(--purple)}
+  .steps li:nth-child(odd){background:#f7f9fc}
+  .key{
+    background:#fff8ea;border-left:3px solid var(--orange);border-radius:8px;
+    padding:8px 12px;margin:8px 0;font-size:13.8px;line-height:1.85;
+  }
+  .key.blue{background:var(--blue-soft);border-left-color:var(--blue)}
+  .key.purple{background:var(--purple-soft);border-left-color:var(--purple)}
+  .key.green{background:var(--green-soft);border-left-color:var(--green)}
+  .hl{color:var(--blue);font-weight:600;font-style:normal}
+  .hl-p{color:var(--purple);font-weight:600;font-style:normal}
+  .hl-g{color:#1f9d43;font-weight:600;font-style:normal}
+  .hl-r{color:var(--red);font-weight:600;font-style:normal}
+  /* ---------- 结论 ---------- */
+  .conclusion{
+    border-radius:12px;padding:13px 16px;font-size:14px;line-height:1.8;
+    background:linear-gradient(120deg,#e9f3ff,#f0eaff);border:1px solid #c9dcff;
+    box-shadow:0 2px 10px rgba(94,92,230,.10);
+    display:flex;gap:10px;align-items:flex-start;
+  }
+  .conclusion .cicon{flex:none;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:2px}
+  /* ---------- 画布工具栏 ---------- */
+  .toolbar{
+    display:flex;align-items:center;gap:10px;padding:12px 16px;flex:none;flex-wrap:wrap;
+    border-bottom:1px solid var(--line);background:#fafbfe;
+  }
+  .toolbar .title{font-size:13.5px;font-weight:700;color:var(--ink-2)}
+  .tbtns{display:flex;gap:6px;margin-left:auto}
+  .tbtn{
+    width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:#fff;
+    color:var(--ink-2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:all .15s;
+  }
+  .tbtn:hover{border-color:var(--blue);color:var(--blue)}
+  .tbtn.on{background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
+  .kctl{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px 14px}
+  .kctl label{font-size:12.5px;font-weight:600;color:var(--ink-2);white-space:nowrap}
+  .kctl input[type=range]{width:150px;accent-color:var(--blue)}
+  .kctl .kval{font-family:"Cambria Math",Georgia,serif;font-style:italic;min-width:34px;text-align:center;color:var(--blue);font-weight:700}
+  .mini-seg{display:flex;background:#e9edf4;border-radius:9px;padding:2px;gap:2px}
+  .mini-seg button{border:0;background:transparent;padding:6px 12px;border-radius:7px;font-size:12.5px;font-weight:600;color:var(--ink-2);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+  .mini-seg button.on{background:#fff;color:var(--blue);box-shadow:0 1px 3px rgba(16,24,40,.12)}
+  /* ---------- 画布 ---------- */
+  .canvas-wrap{flex:1;position:relative;min-height:0}
+  canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+  canvas.dragging{cursor:grabbing}
+  .legend{
+    position:absolute;left:14px;bottom:12px;display:flex;flex-wrap:wrap;gap:8px;max-width:calc(100% - 28px);
+  }
+  .chip{
+    display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.9);backdrop-filter:blur(6px);
+    border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:12px;color:var(--ink-2);
+    box-shadow:0 1px 4px rgba(16,24,40,.06);white-space:nowrap;
+  }
+  .chip .ln{width:22px;height:0;border-top:3px solid;border-radius:2px}
+  .chip .ln.dash{border-top-style:dashed;border-top-width:2px}
+  .chip .ln.dot{border-top-style:dotted;border-top-width:2px}
+  .zoomhint{
+    position:absolute;right:14px;top:12px;font-size:11.5px;color:var(--ink-3);
+    background:rgba(255,255,255,.85);border:1px solid var(--line);border-radius:8px;padding:5px 10px;backdrop-filter:blur(6px);
+  }
+  @media (max-width:920px){
+    body{overflow:auto}
+    main{flex-direction:column;height:auto}
+    aside{width:100%;border-right:0;border-bottom:1px solid var(--line);overflow:visible}
+    .stage{height:70vh;min-height:480px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 4v15.2"/>
+      <path d="M4 19.2h16"/>
+      <path d="M4 4l1.6-1.6M4 4L2.4 5.6" opacity=".9"/>
+      <path d="M20 19.2l-1.2 1.2M20 19.2l1.2-1.2" opacity="0"/>
+      <path d="M19.2 20H20v-.8" opacity="0"/>
+      <path d="M5.8 16.4c2.2 0 2.6-1.2 3.9-3.4 1.3-2.2 2.1-5.4 3.9-5.4 1.5 0 1.8 2.8 3.1 2.8.9 0 1.4-1.1 2.1-2.6"/>
+      <circle cx="9.7" cy="13" r="1.15" fill="#fff" stroke="none"/>
+    </svg>
+  </div>
+  <div class="titles">
+    <h1>第 20 题演示</h1>
+  </div>
+  <div class="spacer"></div>
+  <button class="setbtn" id="settingsBtn" title="设置" aria-label="设置">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3.1"/>
+      <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.56-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.08A1.7 1.7 0 0 0 10 3.09V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.08a1.7 1.7 0 0 0 1.56 1.03H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/>
+    </svg>
+  </button>
+  <div class="settings-pop" id="settingsPop" role="dialog" aria-label="设置">
+    <div class="settings-title">显示设置</div>
+    <label class="switch-row" for="showSteps">
+      <span>
+        <span>显示解题过程</span>
+        <div class="sr-sub">关闭后仅保留题目与图像</div>
+      </span>
+      <span class="switch">
+        <input type="checkbox" id="showSteps" checked>
+        <i></i>
+      </span>
+    </label>
+  </div>
+</header>
+
+<main>
+  <!-- ============ 左栏：题目与解答 ============ -->
+  <aside>
+    <div class="card problem-card">
+      <h2><span class="dot"></span>题目回顾</h2>
+      <div class="problem math">
+        设函数 f(x) = x² + mx − 4e<sup>nx−1</sup>（n ∈ 𝐙），曲线 y = f(x) 在点
+        (−1, f(−1)) 处的切线方程为 4x + e²y + e² + 8 = 0。
+      </div>
+      <div class="q-list math">
+        <div><b>(Ⅰ)</b> 求 m，n 的值；</div>
+        <div><b>(Ⅱ)</b> 求 f(x) 的极值点个数；</div>
+        <div><b>(Ⅲ)</b> 求直线 y = kx − 1（k &gt; 0）与曲线 y = f(x) 的交点个数。</div>
+      </div>
+    </div>
+
+    <!-- 小问切换 -->
+    <div class="seg" id="partSeg">
+      <button data-part="1" class="on">第 (Ⅰ) 问</button>
+      <button data-part="2">第 (Ⅱ) 问</button>
+      <button data-part="3">第 (Ⅲ) 问</button>
+    </div>
+
+    <!-- 解法切换（仅 Ⅰ、Ⅱ） -->
+    <div id="methodArea">
+      <div class="seg method" id="methodSeg">
+        <button data-m="official" class="on"></button>
+        <button data-m="alt"></button>
+      </div>
+      <div class="method-note" id="methodNote"></div>
+    </div>
+
+    <div class="card" id="stepsCard">
+      <h2><span class="dot" id="stepsDot"></span><span id="stepsTitle">解答过程</span></h2>
+      <ol class="steps" id="stepsList"></ol>
+    </div>
+
+    <div class="conclusion" id="conclusion"></div>
+    <div class="hidden-note" id="hiddenNote">
+      解题过程已隐藏<br>可在右上角 <b>设置</b> 中重新开启
+    </div>
+  </aside>
+
+  <!-- ============ 右栏：坐标系 ============ -->
+  <section class="stage">
+    <div class="toolbar">
+      <span class="title" id="canvasTitle">图像</span>
+      <div id="q3ctl" style="display:none;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="kctl">
+          <label>k =</label>
+          <input type="range" id="kRange" min="0.05" max="5" step="0.05" value="1.2">
+          <span class="kval" id="kVal">1.20</span>
+        </div>
+        <div class="mini-seg" id="viewSeg">
+          <button data-v="intersection" class="on">交点视角</button>
+          <button data-v="ratio">比值视角</button>
+        </div>
+      </div>
+      <div class="tbtns">
+        <button class="tbtn" id="zoomOut" title="缩小">−</button>
+        <button class="tbtn" id="zoomIn" title="放大">＋</button>
+        <button class="tbtn on" id="gridBtn" title="网格">▦</button>
+        <button class="tbtn" id="resetBtn" title="重置视图">⟲</button>
+      </div>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="cv"></canvas>
+      <div class="zoomhint">拖动平移 · 滚轮/双指缩放 · 双击复位</div>
+      <div class="legend" id="legend"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ================================================================
+   2026 北京高考数学第 20 题 · 交互演示
+   ================================================================ */
+'use strict';
+const E = Math.E;
+const f    = x => x*x + 2*x - 4*Math.exp(x-1);            // f(x)
+const df   = x => 2*x + 2 - 4*Math.exp(x-1);              // f'(x)
+const tan1 = x => -4/(E*E)*x - 1 - 8/(E*E);               // 第(Ⅰ)问切线
+const g2   = x => x + 1 - 2*Math.exp(x-1);                // 第(Ⅱ)问 g(x)=f'/2
+const epx  = x => Math.exp(x-1);                          // e^{x-1}
+const half = x => (x+1)/2;                                // (x+1)/2
+const Fx   = x => ((x+1)*(x+1) - 4*Math.exp(x-1))/x;      // 第(Ⅲ)问比值函数 F(x)
+const kline= x => state.k*x - 1;                          // y = kx - 1
+const X1   = -1 - lambertW0(-2/(E*E));                    // 极小值点 x₁（数值）
+function lambertW0(z){ // 主分支 W₀，牛顿迭代（仅用于 x₁ 数值显示）
+  let w = z > -0.2 ? z*(1+z*(1+z*1.5)) : -1;              // 粗略初值
+  for(let i=0;i<60;i++){
+    const ew = Math.exp(w);
+    const t = w*ew - z;
+    w -= t/(ew*(w+1) - (w+2)*t/(2*w+2));
+    if(Math.abs(t) < 1e-14) break;
+  }
+  return w;
+}
+
+/* ---------------- 全局状态 ---------------- */
+const state = { part:1, method:'official', view:'intersection', k:1.2, grid:true };
+const views = { 1:{cx:-0.4,cy:-1.6,s:70}, 2:{cx:0.2,cy:-0.8,s:75}, 3:{cx:0.3,cy:-1.2,s:75} };
+const viewOf = () => views[state.part];
+
+/* ---------------- 内容定义 ---------------- */
+const CONTENT = {
+  1:{
+    title:'第 (Ⅰ) 问 · 求 m，n',
+    methods:{
+      official:{ name:'官方答案', note:'分类讨论 + 整数约束',
+        steps:`
+<li>求导：<span class="math">f′(x) = 2x + m − 4n·e<sup>nx−1</sup></span>。切线化为斜截式：
+  <span class="math">y = −<span class="frac"><span>4</span><span>e²</span></span>x − 1 − <span class="frac"><span>8</span><span>e²</span></span></span>，
+  故在 x = −1 处切线纵坐标为 <span class="math">−1 − <span class="frac"><span>4</span><span>e²</span></span></span>，斜率为 <span class="math">−<span class="frac"><span>4</span><span>e²</span></span></span>。</li>
+<li>由切点双重身份（在曲线上 + 斜率相等）列方程组：
+  <div class="key math">1 − m − 4e<sup>−n−1</sup> = −1 − <span class="frac"><span>4</span><span>e²</span></span> 　…①<br>
+  −2 + m − 4n·e<sup>−n−1</sup> = −<span class="frac"><span>4</span><span>e²</span></span> 　…②</div></li>
+<li>① + ② 消去 m：
+  <div class="key math">−1 − 4(n+1)e<sup>−n−1</sup> = −1 − 8e<sup>−2</sup>
+  　⟹　(n+1)e<sup>−n−1</sup> = 2e<sup>−2</sup>
+  　⟹　<span class="hl">n + 1 = 2e<sup>n−1</sup>（n ∈ 𝐙）</span></div></li>
+<li>官方分类讨论：
+  <div class="key blue">n = 1：等式成立（2 = 2）；<br>
+  n ≥ 2：2e<sup>n−1</sup> &gt; 2·2<sup>n−1</sup> = 2<sup>n</sup> ≥ n+1，不成立；<br>
+  n = 0：1 ≠ <span class="frac"><span>2</span><span>e</span></span>，不成立；<br>
+  n ≤ −1：左边 n+1 ≤ 0，右边 2e<sup>n−1</sup> &gt; 0，不成立。</div></li>
+<li>故 <span class="hl">n = 1</span>，代回 ①：<span class="math">1 − m − 4e<sup>−2</sup> = −1 − 4e<sup>−2</sup></span> ⟹ <span class="hl">m = 2</span>。</li>`,
+        concl:'<b>结论：</b>m = 2，n = 1，即 <span class="math">f(x) = x² + 2x − 4e<sup>x−1</sup></span>。官方解法的核心是「指数与代数分离 + 整数分类讨论」。'
+      },
+      lambert:{ name:'Lambert W 解法', note:'超越方程显式求解 · 分支定解',
+        steps:`
+<li>与官方解法相同，由切线条件列方程组并相加消元，得超越方程：
+  <div class="key math"><span class="hl-p">n + 1 = 2e<sup>n−1</sup></span>（n ∈ 𝐙）</div></li>
+<li>移项构造 ue<sup>u</sup> 标准形：
+  <div class="key math">(n+1)e<sup>−(n+1)</sup> = 2e<sup>−2</sup><br>
+  令 u = −(n+1)，则 <span class="hl-p">u·e<sup>u</sup> = −2e<sup>−2</sup></span></div></li>
+<li>由 Lambert W 函数定义（we<sup>w</sup> = z ⟺ w = W(z)）：
+  <div class="key math">u = W(−2e<sup>−2</sup>)　⟹　<span class="hl-p">n = −1 − W(−2e<sup>−2</sup>)</span></div></li>
+<li>因 −2e<sup>−2</sup> ≈ −0.2707 ∈ (−1/e, 0)，W 有<span class="hl-p">两个实分支</span>，逐一检验：
+  <div class="key purple">主支 W₀：W₀(−2e<sup>−2</sup>) ≈ −0.4064 ⟹ n ≈ −0.594 ∉ 𝐙，舍去；<br>
+  负一支 W₋₁：W₋₁(−2e<sup>−2</sup>) = −2（恰因 (−2)e<sup>−2</sup> = −2e<sup>−2</sup> 精确成立）⟹ <span class="hl-p">n = 1</span> ✓</div></li>
+<li>n = 1 代回原方程组得 <span class="hl-p">m = 2</span>。整数约束 n ∈ 𝐙 恰好筛掉主支解，W₋₁ 分支给出精确整数解。</li>
+<li class="alt" style="list-style:none">彩蛋：被舍去的非整数解 n ≈ −0.594，正是第 (Ⅱ) 问的极小值点 x₁ = −1 − W₀(−2e<sup>−2</sup>) —— 同一超越方程的两根在第 (Ⅰ)(Ⅱ) 问中各现身一次。</li>`,
+        concl:'<b>结论：</b>m = 2，n = 1。Lambert W 把「分类讨论」转化为「分支分析」：W₋₁(−2e<sup>−2</sup>) = −2 是精确恒等式，无需任何放缩。'
+      }
+    }
+  },
+  2:{
+    title:'第 (Ⅱ) 问 · 极值点个数',
+    methods:{
+      official:{ name:'官方答案 · 二阶导卡值', note:'g′ 定单调 · 三点卡两零点',
+        steps:`
+<li>由 (Ⅰ)：<span class="math">f(x) = x² + 2x − 4e<sup>x−1</sup></span>，
+  <span class="math">f′(x) = 2x + 2 − 4e<sup>x−1</sup> = 2(x + 1 − 2e<sup>x−1</sup>)</span>。</li>
+<li>令 <span class="math">g(x) = x + 1 − 2e<sup>x−1</sup></span>（即 f′/2），再求导：
+  <div class="key math">g′(x) = 1 − 2e<sup>x−1</sup> = 0 ⟹ x = 1 − ln2 ≈ 0.307</div>
+  g 在 (−∞, 1−ln2) 单调递增，在 (1−ln2, +∞) 单调递减。</li>
+<li>「卡值」——在两个单调区间上各取点定号：
+  <div class="key blue math">g(−1) = −2e<sup>−2</sup> &lt; 0，　g(0) = 1 − <span class="frac"><span>2</span><span>e</span></span> &gt; 0，　g(2) = 3 − 2e &lt; 0</div>
+  左段：g(−1) &lt; 0 且 g 在 (−∞, −1] 上递增 ⟹ (−∞, −1] 上 g &lt; 0，无零点；g(−1)&lt;0，g(0)&gt;0 ⟹ 在 (−1, 0) 内恰有一零点 x₁；<br>
+  右段：g(0) &gt; 0，g(2) &lt; 0 ⟹ 在 (0, 2) 内恰有一零点 x₂。</li>
+<li>两段各至多一个零点（严格单调），故 <span class="hl">g 恰有两个变号零点</span>，
+  即 f′(x) 恰有两个变号零点：
+  <div class="key math">x₁ ∈ (−1, 0)（极小值点），　x₂ ∈ (0, 2)（极大值点）</div></li>
+<li>符号规律：f′ 为 负→正→负，f 为 减→增→减，两个极值点。</li>`,
+        concl:'<b>结论：</b>f(x) 恰有 <span class="hl">2 个极值点</span>：极小值点 x₁ ∈ (−1, 0)，极大值点 x₂ ∈ (0, 2)。（事实上 f′(1) = 0，x₂ = 1 精确成立。）'
+      },
+      convex:{ name:'凸函数法', note:'eˣ 的凸性 · 直线交点至多两个',
+        steps:`
+<li>极值点即 f′ 的变号零点：
+  <div class="key math">f′(x) = 0 ⟺ 2x + 2 − 4e<sup>x−1</sup> = 0 ⟺ <span class="hl-p">e<sup>x−1</sup> = <span class="frac"><span>x+1</span><span>2</span></span></span></div>
+  几何意义：<b>凸曲线 y = e<sup>x−1</sup> 与直线 y = (x+1)/2 的交点</b>。</li>
+<li>构造差函数并验证严格凸：
+  <div class="key math">φ(x) = e<sup>x−1</sup> − <span class="frac"><span>x+1</span><span>2</span></span>，　φ″(x) = e<sup>x−1</sup> &gt; 0（∀x ∈ 𝐑）</div></li>
+<li>关键性质：<span class="hl-p">严格凸函数与 x 轴至多两个交点</span>。
+  反设三零点 a &lt; b &lt; c，由凸性 φ(b) &lt; max{φ(a), φ(c)} = 0，与 φ(b) = 0 矛盾。</li>
+<li>再证至少两个（找点定号）：
+  <div class="key purple math">φ(1) = 1 − 1 = 0 ✓（精确零点）<br>
+  φ(−1) = e<sup>−2</sup> &gt; 0，　φ(0) = <span class="frac"><span>1</span><span>e</span></span> − <span class="frac"><span>1</span><span>2</span></span> &lt; 0（因 e &gt; 2）</div>
+  ⟹ φ 在 (−1, 0) 内还有一个零点 x₁。</li>
+<li>两零点均为变号零点（φ 在零点两侧严格改变符号），故 f 恰有两个极值点。</li>
+<li>几何彩蛋：y = x 恰是 e<sup>x−1</sup> 在 x = 1 处的切线（e<sup>t</sup> ≥ t+1），直线 y = (x+1)/2 也过 (1, 1)，凸性让两交点「一览无余」（见右图）。</li>`,
+        concl:'<b>结论：</b>凸曲线 y = e<sup>x−1</sup> 与直线 y = (x+1)/2 恰有 2 个交点（x₁ ∈ (−1,0) 与 x = 1），故 f(x) 恰有 <span class="hl-p">2 个极值点</span>。'
+      }
+    }
+  },
+  3:{
+    title:'第 (Ⅲ) 问 · 交点个数（比值函数法）',
+    steps:`
+<li>交点满足 f(x) = kx − 1，整理：
+  <div class="key math">x² + 2x − 4e<sup>x−1</sup> = kx − 1 ⟺ <span class="hl">(x+1)² − 4e<sup>x−1</sup> = kx</span></div></li>
+<li>x = 0 时左边 = 1 − 4/e &lt; 0 ≠ 0，故 x = 0 不是解；x ≠ 0 时<b>分离比值</b>：
+  <div class="key math">k = F(x) := <span class="frac"><span>(x+1)² − 4e<sup>x−1</sup></span><span>x</span></span>（x ≠ 0）</div>
+  问题转化为：水平线 y = k（k &gt; 0）与 y = F(x) 的交点个数。</li>
+<li>求导并因式分解：
+  <div class="key math">F′(x) = <span class="frac"><span>(x−1)·[ (x+1) − 4e<sup>x−1</sup> ]</span><span>x²</span></span> =
+  <span class="frac"><span>(x−1)·μ(x)</span><span>x²</span></span>，　μ(x) = (x+1) − 4e<sup>x−1</sup></div></li>
+<li>关键引理：<span class="hl-g">μ(x) &lt; 0 恒成立</span>。
+  <div class="key green math">μ′(x) = 1 − 4e<sup>x−1</sup> = 0 ⟹ x = 1 − ln4<br>
+  μ<sub>max</sub> = μ(1−ln4) = (2−ln4) − 1 = <span class="hl-g">1 − ln4 &lt; 0</span>（ln4 &gt; lne = 1）</div></li>
+<li>分类讨论（符号由 (x−1) 与 μ(x) 决定，x² &gt; 0）：
+  <div class="key blue">① x &gt; 0：μ &lt; 0 ⟹ F′ 与 (x−1) 反号，F 在 (0,1) 增、(1,+∞) 减，
+  最大值 <span class="math">F(1) = <span class="frac"><span>4−4</span><span>1</span></span> = 0</span>。
+  故 <span class="hl-r">F(x) ≤ 0 &lt; k，无解</span>；<br>
+  ② x &lt; 0：x−1 &lt; 0 且 μ &lt; 0 ⟹ <span class="hl-g">F′ &gt; 0 恒成立</span>，F 严格递增；
+  又 x → −∞ 时 F → −∞，x → 0⁻ 时分子 → 1−4/e &lt; 0、分母 → 0⁻，F → +∞。
+  值域为 𝐑 ⟹ 对任意 k &gt; 0 <span class="hl-g">恰有一解</span>。</div></li>
+<li>两半支合计：对任意 k &gt; 0，原方程恰有 1 个解。拖动右上方滑块改变 k，比值视角下可直观看到水平线 y = k 始终只与 x &lt; 0 支相交一次。</li>`,
+    concl:'<b>结论：</b>无论 k &gt; 0 取何值，直线 y = kx − 1 与曲线 y = f(x) 恒有且仅有 <span class="hl">1 个交点</span>，且交点横坐标恒为负数。'
+  }
+};
+
+/* ---------------- 左栏渲染 ---------------- */
+const $ = s => document.querySelector(s);
+const partSeg = $('#partSeg'), methodSeg = $('#methodSeg'), methodArea = $('#methodArea'),
+      methodNote = $('#methodNote'), stepsList = $('#stepsList'),
+      stepsTitle = $('#stepsTitle'), stepsDot = $('#stepsDot'),
+      conclusion = $('#conclusion'), canvasTitle = $('#canvasTitle');
+
+function render(){
+  const c = CONTENT[state.part];
+  canvasTitle.textContent = '图像 · ' + c.title.split(' · ')[0];
+  if(state.part === 3){
+    methodArea.style.display = 'none';
+    stepsTitle.textContent = '比值函数法 · 解答过程';
+    stepsDot.style.background = 'var(--purple)';
+    stepsList.innerHTML = CONTENT[3].steps;
+    conclusion.innerHTML = CONTENT[3].concl;
+  } else {
+    methodArea.style.display = '';
+    const ms = methodSeg.querySelectorAll('button');
+    const keys = Object.keys(c.methods);
+    ms[0].dataset.m = keys[0];
+    ms[1].dataset.m = keys[1];
+    ms[0].textContent = c.methods[keys[0]].name;
+    ms[1].textContent = c.methods[keys[1]].name;
+    if(!c.methods[state.method]) state.method = keys[0];
+    ms.forEach(b => b.classList.toggle('on', b.dataset.m === state.method));
+    const m = c.methods[state.method];
+    const isOfficial = state.method === 'official';
+    methodNote.innerHTML = `<span class="tag">解法</span>${m.note}`;
+    stepsTitle.textContent = m.name + ' · 解答过程';
+    stepsDot.style.background = isOfficial ? 'var(--blue)' : 'var(--purple)';
+    stepsList.innerHTML = m.steps;
+    conclusion.innerHTML = m.concl;
+  }
+  $('#q3ctl').style.display = state.part === 3 ? 'flex' : 'none';
+  renderLegend();
+  draw();
+}
+
+partSeg.addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  state.part = +b.dataset.part;
+  partSeg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  render();
+});
+methodSeg.addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  state.method = b.dataset.m; render();
+});
+$('#viewSeg').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  state.view = b.dataset.v;
+  $('#viewSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  renderLegend(); draw();
+});
+$('#kRange').addEventListener('input', e=>{
+  state.k = +e.target.value;
+  $('#kVal').textContent = state.k.toFixed(2);
+  draw();
+});
+
+/* ---------------- 图例 ---------------- */
+function renderLegend(){
+  const L = $('#legend'); let items;
+  if(state.part === 1){
+    items = [
+      ['#0a84ff','',  'y = f(x) = x² + 2x − 4eˣ⁻¹'],
+      ['#ff453a','dash','切线 4x + e²y + e² + 8 = 0'],
+    ];
+  } else if(state.part === 2){
+    if(state.method === 'official'){
+      items = [
+        ['#0a84ff','',  'y = f(x)'],
+        ['#ff9f0a','dash',"y = f′(x) = 2(x+1−2eˣ⁻¹)"],
+        ['#8a93a6','dot','x = x₁ ≈ −0.594，x = 1，x = 1−ln2'],
+      ];
+    } else {
+      items = [
+        ['#bf5af2','',  'y = eˣ⁻¹（严格凸）'],
+        ['#ff453a','',  'y = (x+1)/2'],
+        ['#30d158','dot','y = x（x=1 处切线）'],
+      ];
+    }
+  } else {
+    items = state.view === 'intersection' ? [
+      ['#0a84ff','',  'y = f(x)'],
+      ['#ff453a','',  'y = kx − 1（可拖 k）'],
+      ['#30d158','',  '交点（恰 1 个）'],
+    ] : [
+      ['#bf5af2','',  'y = F(x) = [(x+1)²−4eˣ⁻¹]/x'],
+      ['#ff453a','dash','y = k（k > 0）'],
+      ['#8a93a6','dot','渐近线 x = 0 · 最大值 F(1) = 0'],
+    ];
+  }
+  L.innerHTML = items.map(i=>`<span class="chip"><span class="ln ${i[1]}" style="border-color:${i[0]};${i[1]?'':'background:'+i[0]}"></span>${i[2]}</span>`).join('');
+}
+
+/* ================================================================
+   画布：可拖动、可缩放的坐标系
+   ================================================================ */
+const cv = $('#cv'), ctx = cv.getContext('2d');
+let W = 0, H = 0, dpr = 1;
+function resize(){
+  const r = cv.getBoundingClientRect();
+  dpr = window.devicePixelRatio || 1;
+  W = r.width; H = r.height;
+  cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+  draw();
+}
+new ResizeObserver(resize).observe(cv);
+
+const V = () => viewOf();
+const sx = wx => (wx - V().cx)*V().s + W/2;
+const sy = wy => H/2 - (wy - V().cy)*V().s;
+const wx = px => (px - W/2)/V().s + V().cx;
+const wy = py => (H/2 - py)/V().s + V().cy;
+
+/* ---- 交互：拖拽 / 滚轮 / 双指 ---- */
+const pointers = new Map();
+let pinch0 = null, dragMoved = false;
+
+cv.addEventListener('pointerdown', e=>{
+  cv.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  dragMoved = false;
+  cv.classList.add('dragging');
+  if(pointers.size === 2){
+    const [a,b] = [...pointers.values()];
+    pinch0 = {d: Math.hypot(a.x-b.x, a.y-b.y), s: V().s,
+              cx: (a.x+b.x)/2, cy: (a.y+b.y)/2,
+              wx: wx((a.x+b.x)/2 - cv.getBoundingClientRect().left),
+              wy: wy((a.y+b.y)/2 - cv.getBoundingClientRect().top)};
+  }
+});
+cv.addEventListener('pointermove', e=>{
+  if(!pointers.has(e.pointerId)) return;
+  const rect = cv.getBoundingClientRect();
+  const prev = pointers.get(e.pointerId);
+  pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  if(pointers.size === 1){
+    const dx = e.clientX - prev.x, dy = e.clientY - prev.y;
+    if(Math.abs(dx)+Math.abs(dy) > 0){ dragMoved = true; }
+    V().cx -= dx/V().s; V().cy += dy/V().s;
+    draw();
+  } else if(pointers.size === 2 && pinch0){
+    const [a,b] = [...pointers.values()];
+    const d = Math.hypot(a.x-b.x, a.y-b.y);
+    const mx = (a.x+b.x)/2 - rect.left, my = (a.y+b.y)/2 - rect.top;
+    const ns = Math.min(4000, Math.max(6, pinch0.s * d/pinch0.d));
+    const ax = wx(mx), ay = wy(my);       // 锚定双指中心的世界坐标
+    V().s = ns;
+    V().cx = ax - (mx - W/2)/ns;
+    V().cy = ay + (my - H/2)/ns;
+    draw();
+  }
+});
+const endPointer = e=>{
+  pointers.delete(e.pointerId);
+  if(pointers.size < 2) pinch0 = null;
+  if(pointers.size === 0) cv.classList.remove('dragging');
+};
+cv.addEventListener('pointerup', endPointer);
+cv.addEventListener('pointercancel', endPointer);
+cv.addEventListener('wheel', e=>{
+  e.preventDefault();
+  const rect = cv.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const ax = wx(mx), ay = wy(my);
+  const factor = Math.exp(-e.deltaY * 0.0015);
+  V().s = Math.min(4000, Math.max(6, V().s * factor));
+  V().cx = ax - (mx - W/2)/V().s;
+  V().cy = ay + (my - H/2)/V().s;
+  draw();
+}, {passive:false});
+cv.addEventListener('dblclick', ()=>{ resetView(); });
+
+$('#zoomIn').onclick  = ()=>zoomBy(1.25);
+$('#zoomOut').onclick = ()=>zoomBy(0.8);
+$('#gridBtn').onclick = e=>{ state.grid = !state.grid; e.target.classList.toggle('on', state.grid); draw(); };
+$('#resetBtn').onclick = resetView;
+function zoomBy(f){
+  const ax = wx(W/2), ay = wy(H/2);
+  V().s = Math.min(4000, Math.max(6, V().s*f));
+  V().cx = ax; V().cy = ay; draw();
+}
+function resetView(){
+  const d = {1:{cx:-0.4,cy:-1.6,s:70}, 2:{cx:0.2,cy:-0.8,s:75}, 3:{cx:0.3,cy:-1.2,s:75}};
+  Object.assign(V(), d[state.part]); draw();
+}
+
+/* ---- 绘制基础 ---- */
+function niceStep(){
+  const raw = 90/V().s, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  for(const m of [1,2,5,10]) if(m*mag >= raw) return m*mag;
+  return 10*mag;
+}
+function drawGrid(){
+  const st = niceStep();
+  ctx.lineWidth = 1;
+  ctx.font = '11px -apple-system,"PingFang SC",sans-serif';
+  ctx.fillStyle = '#9aa3b5'; ctx.strokeStyle = '#e8ecf3';
+  const x0 = Math.floor(wx(0)/st)*st, x1 = wx(W);
+  for(let x = x0; x <= x1; x += st){
+    const px = sx(x);
+    ctx.beginPath(); ctx.moveTo(px,0); ctx.lineTo(px,H); ctx.stroke();
+    if(Math.abs(x) > st/1e6){ ctx.textAlign = 'center'; ctx.fillText(fmt(x), px, sy(0)+14); }
+  }
+  const y0 = Math.floor(wy(H)/st)*st, y1 = wy(0);
+  for(let y = y0; y <= y1; y += st){
+    const py = sy(y);
+    ctx.beginPath(); ctx.moveTo(0,py); ctx.lineTo(W,py); ctx.stroke();
+    if(Math.abs(y) > st/1e6){ ctx.textAlign = 'left'; ctx.fillText(fmt(y), sx(0)+6, py+4); }
+  }
+  /* 轴线 */
+  ctx.strokeStyle = '#a5adbf'; ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.moveTo(0,sy(0)); ctx.lineTo(W,sy(0)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(sx(0),0); ctx.lineTo(sx(0),H); ctx.stroke();
+  /* 箭头 */
+  ctx.fillStyle = '#a5adbf';
+  tri(W-4, sy(0), -1, 0); tri(sx(0), 4, 0, 1);
+  ctx.font = 'italic 13px Georgia,serif'; ctx.fillStyle = '#8a93a6';
+  ctx.textAlign='left'; ctx.fillText('x', W-16, sy(0)-8); ctx.fillText('y', sx(0)+8, 14);
+}
+function tri(x,y,dx,dy){
+  ctx.beginPath();
+  ctx.moveTo(x,y); ctx.lineTo(x-9*dx-4*dy, y-9*dy+4*dx); ctx.lineTo(x-9*dx+4*dy, y-9*dy-4*dx);
+  ctx.closePath(); ctx.fill();
+}
+function fmt(v){
+  const a = Math.abs(v);
+  if(a >= 1000 || (a < 0.01 && a > 0)) return v.toExponential(0);
+  return String(Math.round(v*100)/100);
+}
+function plot(fn, color, width=2.4, dash=[]){
+  ctx.save();
+  ctx.strokeStyle = color; ctx.lineWidth = width; ctx.setLineDash(dash);
+  ctx.lineJoin='round'; ctx.beginPath();
+  let started = false;
+  for(let px = 0; px <= W; px += 1){
+    let y; try{ y = fn(wx(px)); }catch(_){ started=false; continue; }
+    if(typeof y !== 'number' || !isFinite(y)){ started=false; continue; }
+    const py = sy(y);
+    if(py < -H || py > 2*H){ started=false; continue; }
+    if(!started){ ctx.moveTo(px,py); started=true; } else ctx.lineTo(px,py);
+  }
+  ctx.stroke(); ctx.restore();
+}
+function vline(x, color, dash=[4,4], width=1.4){
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width; ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.moveTo(sx(x),0); ctx.lineTo(sx(x),H); ctx.stroke(); ctx.restore();
+}
+function dot(px,py,color,r=4.6,stroke='#fff'){
+  ctx.save(); ctx.beginPath(); ctx.arc(px,py,r,0,7);
+  ctx.fillStyle=color; ctx.fill();
+  if(stroke){ ctx.lineWidth=1.8; ctx.strokeStyle=stroke; ctx.stroke(); }
+  ctx.restore();
+}
+function label(text, wpx, wpy, color='#5b6474', size=12, align='left', dy=-10){
+  ctx.save();
+  ctx.font = `${size}px -apple-system,"PingFang SC",sans-serif`;
+  ctx.fillStyle = color; ctx.textAlign = align;
+  const px = sx(wpx), py = sy(wpy);
+  const wtxt = ctx.measureText(text).width;
+  /* 白底圆角小药丸，保证任何背景下可读 */
+  ctx.fillStyle = 'rgba(255,255,255,.88)';
+  roundRect(px - (align==='left'?4:align==='right'?wtxt+4:wtxt/2+4), py+dy-13, wtxt+8, 18, 6);
+  ctx.fill();
+  ctx.fillStyle = color;
+  ctx.fillText(text, px, py+dy);
+  ctx.restore();
+}
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function mathLabel(text, wpx, wpy, color='#5b6474', size=13, align='left', dy=-10){
+  label(text, wpx, wpy, color, size, align, dy);
+}
+
+/* ---- 第(Ⅲ)问数值求根 ---- */
+function findIntersection(k){
+  const h = x => x*x + (2-k)*x + 1 - 4*Math.exp(x-1);
+  let a = -30, fa = h(a), prevX = a, prevH = fa;
+  for(let x = -30+0.005; x < -1e-4; x += 0.005){
+    const hx = h(x);
+    if(!isFinite(hx)) break;
+    if(hx === 0 || prevH*hx < 0){
+      let lo = prevX, hi = x, flo = prevH;
+      for(let i=0;i<80;i++){
+        const m = (lo+hi)/2, fm = h(m);
+        if(flo*fm <= 0) hi = m; else { lo = m; flo = fm; }
+      }
+      return (lo+hi)/2;
+    }
+    prevX = x; prevH = hx;
+  }
+  return null;
+}
+
+/* ---- 主绘制 ---- */
+function draw(){
+  if(!W || !H) return;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,W,H);
+  if(state.grid) drawGrid();
+
+  if(state.part === 1) drawQ1();
+  else if(state.part === 2) drawQ2();
+  else drawQ3();
+}
+
+function drawQ1(){
+  plot(f, '#0a84ff', 2.6);
+  plot(tan1, '#ff453a', 2, [9,6]);
+  vline(-1, '#b9c0cf');
+  dot(sx(-1), sy(f(-1)), '#ff453a', 5);
+  label('切点 (−1, −1−4/e²) ≈ (−1, −1.541)', -1, f(-1), '#c2352b', 12, 'left', -14);
+  mathLabel('f(x) = x² + 2x − 4eˣ⁻¹', 1.55, f(1.55)+0.7, '#0a5fcc', 13, 'left', 18);
+  mathLabel('切线：y = −4x/e² − 1 − 8/e²', 2.6, tan1(2.6)-0.9, '#c2352b', 13, 'left', -12);
+  label('x = −1', -1, wy(H-14), '#8a93a6', 11, 'right', -4);
+}
+
+function drawQ2(){
+  if(state.method === 'official'){
+    plot(f, '#0a84ff', 2.6);
+    plot(df, '#ff9f0a', 1.8, [8,5]);
+    const y1 = X1, gmax_x = 1-Math.LN2;
+    vline(y1, '#b9c0cf'); vline(1, '#b9c0cf'); vline(gmax_x, '#ffd9a3', [3,4]);
+    /* 卡值点 */
+    dot(sx(-1), sy(g2(-1)), '#ff9f0a', 4, '#fff');
+    dot(sx(0),  sy(g2(0)),  '#ff9f0a', 4, '#fff');
+    dot(sx(2),  sy(g2(2)),  '#ff9f0a', 4, '#fff');
+    label('g(−1)=−2e⁻²<0', -1, g2(-1), '#b87700', 11, 'right', -12);
+    label('g(0)=1−2/e>0', 0, g2(0), '#b87700', 11, 'left', -14);
+    label('g(2)=3−2e<0', 2, g2(2), '#b87700', 11, 'left', -12);
+    /* 极值点 */
+    dot(sx(y1), sy(f(y1)), '#0a84ff', 5);
+    dot(sx(1),  sy(f(1)),  '#0a84ff', 5);
+    label('极小值点 x₁ ≈ −0.594', y1, f(y1), '#0a5fcc', 12, 'right', -14);
+    label('极大值点 x₂ = 1', 1, f(1), '#0a5fcc', 12, 'left', -14);
+    label('f′ 顶点 x = 1−ln2', gmax_x, df(gmax_x), '#d4880b', 11, 'left', -12);
+    /* 单调区间 */
+    label('↘ 递减', -2.4, f(-2.4)-1.3, '#5b6474', 12, 'center', 0);
+    label('↗ 递增', 0.2, f(0.2)+1.2, '#5b6474', 12, 'center', 0);
+    label('↘ 递减', 2.6, f(2.6)-1.2, '#5b6474', 12, 'center', 0);
+    mathLabel("y = f′(x)", -2.15, df(-2.15)+0.4, '#d4880b', 12, 'left', -10);
+  } else {
+    plot(epx, '#bf5af2', 2.6);
+    plot(half, '#ff453a', 2.2);
+    plot(x=>x, '#30d158', 1.8, [2,5]);
+    const yA = X1, yv = epx(X1);
+    dot(sx(yA), sy(yv), '#ff453a', 5);
+    dot(sx(1), sy(1), '#ff453a', 5);
+    label('交点 x₁ ≈ −0.594（极小值点）', yA, yv, '#8e3aa8', 12, 'right', -14);
+    label('交点 x₂ = 1（极大值点）', 1, 1, '#8e3aa8', 12, 'left', -14);
+    mathLabel('y = eˣ⁻¹（严格凸）', 1.9, epx(1.9)+0.9, '#8e3aa8', 13, 'left', 18);
+    mathLabel('y = (x+1)/2', 2.7, half(2.7)-0.5, '#c2352b', 13, 'left', -10);
+    mathLabel('y = x（x=1 处切线）', 2.8, 2.8-0.75, '#1f9d43', 12, 'left', -10);
+    label('φ″(x) = eˣ⁻¹ > 0 ⟹ 与 x 轴至多两交点', -2.9, 3.4, '#5b6474', 12, 'left', 0);
+  }
+}
+
+function drawQ3(){
+  if(state.view === 'intersection'){
+    plot(f, '#0a84ff', 2.6);
+    plot(kline, '#ff453a', 2.2);
+    const x0 = findIntersection(state.k);
+    if(x0 !== null){
+      dot(sx(x0), sy(state.k*x0-1), '#30d158', 5.4);
+      label(`交点 (${x0.toFixed(3)}, ${(state.k*x0-1).toFixed(3)})`, x0, state.k*x0-1, '#1f9d43', 12.5, x0 < -0.5 ? 'right' : 'left', -16);
+      label('恰 1 个交点（横坐标恒 < 0）', -2.6, 4.2, '#5b6474', 12.5, 'left', 0);
+    }
+    mathLabel('y = f(x)', 1.7, f(1.7)+0.5, '#0a5fcc', 13, 'left', 16);
+    mathLabel(`y = ${state.k.toFixed(2)}x − 1`, 2.1, state.k*2.1-1, '#c2352b', 13, 'left', -12);
+  } else {
+    plot(Fx, '#bf5af2', 2.6);
+    plot(()=>state.k, '#ff453a', 2, [9,6]);
+    vline(0, '#b9c0cf', [3,4]);
+    dot(sx(1), sy(0), '#bf5af2', 5);
+    const x0 = findIntersection(state.k);
+    if(x0 !== null){
+      dot(sx(x0), sy(state.k), '#30d158', 5.4);
+      label(`交点 (${x0.toFixed(3)}, ${state.k.toFixed(2)})`, x0, state.k, '#1f9d43', 12.5, 'right', -16);
+    }
+    label('x → 0⁻：F → +∞', -0.42, 7.5, '#8a93a6', 11.5, 'left', 0);
+    label('x → 0⁺：F → −∞', 0.28, -7.8, '#8a93a6', 11.5, 'left', 0);
+    label('x < 0：F′ > 0 严格递增，值域 𝐑', -5.2, -3.4, '#5b6474', 12.5, 'left', 0);
+    label('x > 0：F ≤ F(1) = 0 < k，无解', 1.35, -2.6, '#5b6474', 12.5, 'left', 0);
+    mathLabel('y = F(x)', -3.1, Fx(-3.1)+0.8, '#8e3aa8', 13, 'left', 14);
+    mathLabel(`y = ${state.k.toFixed(2)}`, 3.3, state.k, '#c2352b', 13, 'left', -12);
+    mathLabel('最大值 F(1) = 0', 1, 0, '#8e3aa8', 12, 'left', 18);
+  }
+}
+
+/* ---------------- 设置面板 ---------------- */
+const settingsBtn = $('#settingsBtn'), settingsPop = $('#settingsPop'), showSteps = $('#showSteps');
+settingsBtn.addEventListener('click', e=>{
+  e.stopPropagation();
+  settingsPop.classList.toggle('open');
+  settingsBtn.classList.toggle('on', settingsPop.classList.contains('open'));
+});
+document.addEventListener('click', e=>{
+  if(!settingsPop.contains(e.target) && e.target !== settingsBtn && !settingsBtn.contains(e.target)){
+    settingsPop.classList.remove('open'); settingsBtn.classList.remove('on');
+  }
+});
+document.addEventListener('keydown', e=>{
+  if(e.key === 'Escape'){ settingsPop.classList.remove('open'); settingsBtn.classList.remove('on'); }
+});
+function applyShowSteps(v){
+  document.body.classList.toggle('hide-steps', !v);
+  showSteps.checked = v;
+  try{ localStorage.setItem('bj20_showSteps', v ? '1' : '0'); }catch(_){}
+}
+showSteps.addEventListener('change', ()=>applyShowSteps(showSteps.checked));
+try{
+  if(localStorage.getItem('bj20_showSteps') === '0') applyShowSteps(false);
+}catch(_){}
+
+/* ---------------- 启动（支持 #part=2&m=convex&v=ratio&k=2 定位） ---------------- */
+(function initFromHash(){
+  const h = new URLSearchParams(location.hash.slice(1));
+  if(h.get('part') && CONTENT[h.get('part')]) state.part = +h.get('part');
+  if(h.get('m') && CONTENT[state.part] && CONTENT[state.part].methods && CONTENT[state.part].methods[h.get('m')]) state.method = h.get('m');
+  if(h.get('v')) state.view = h.get('v');
+  if(h.get('k') && +h.get('k') > 0){ state.k = Math.min(5, Math.max(0.05, +h.get('k'))); $('#kRange').value = state.k; }
+  partSeg.querySelectorAll('button').forEach(b=>b.classList.toggle('on', +b.dataset.part === state.part));
+  $('#viewSeg').querySelectorAll('button').forEach(b=>b.classList.toggle('on', b.dataset.v === state.view));
+})();
+$('#kVal').textContent = state.k.toFixed(2);
+render();
+window.addEventListener('resize', draw);
+</script>
+</body>
+</html>
