@@ -48,8 +48,73 @@
     transition:all .15s;flex:none;
   }
   .setbtn svg{width:17px;height:17px;display:block}
+  .setbtn.txt{font-size:13px;font-weight:800;letter-spacing:-.02em}
   .setbtn:hover{border-color:var(--blue);color:var(--blue);box-shadow:0 1px 4px rgba(10,132,255,.18)}
   .setbtn.on{background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
+  /* ---------- 逐条演示（讲课模式） ---------- */
+  body.stepwise #stepsList li{display:none}
+  body.stepwise #stepsList li.shown{display:block;animation:stepIn .38s ease}
+  body.stepwise .conclusion{display:none}
+  body.stepwise .conclusion.shown{display:block;animation:stepIn .38s ease}
+  @keyframes stepIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .stepwise-hint{display:none;align-items:center;flex-wrap:wrap;gap:5px;font-size:11.5px;color:var(--ink-3);margin:-4px 2px 10px}
+  body.stepwise .stepwise-hint{display:flex}
+  .stepwise-hint kbd{
+    background:#eef1f6;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;
+    padding:0 6px;font-family:inherit;font-size:11px;color:var(--ink-2);white-space:nowrap;
+  }
+  /* ---------- 演示模式（投影大字号） ---------- */
+  body.preso aside{width:580px}
+  body.preso .problem{font-size:18px}
+  body.preso .q-list{font-size:17.5px}
+  body.preso .steps li{font-size:16.5px;line-height:1.95}
+  body.preso .key{font-size:16.5px;line-height:1.95}
+  body.preso .conclusion{font-size:17px}
+  body.preso .card h2{font-size:15px}
+  body.preso .method-note{font-size:14px}
+  body.preso .seg button{font-size:15px}
+  body.preso .setbtn{width:40px;height:40px}
+  body.preso .setbtn svg{width:20px;height:20px}
+  body.preso .setbtn.txt{font-size:15px}
+  /* ---------- 总览（命题人视角） ---------- */
+  .overview{
+    position:fixed;inset:0;z-index:100;display:none;align-items:flex-start;justify-content:center;
+    background:rgba(16,24,40,.45);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+    overflow-y:auto;padding:5vh 16px 6vh;
+  }
+  .overview.open{display:flex}
+  .ov-card{
+    background:#fff;border-radius:18px;max-width:800px;width:100%;
+    box-shadow:0 24px 70px rgba(16,24,40,.3);padding:24px 30px 30px;
+    animation:stepIn .3s ease;
+  }
+  .ov-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+  .ov-head h3{font-size:17px}
+  .ov-close{
+    width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:#fff;
+    color:var(--ink-3);cursor:pointer;font-size:15px;line-height:1;flex:none;transition:all .15s;
+  }
+  .ov-close:hover{border-color:var(--red);color:var(--red)}
+  .ov-lead{font-size:13.5px;color:var(--ink-2);line-height:1.8;margin:6px 0 14px}
+  .ov-sec{margin-top:18px}
+  .ov-sec h4{
+    font-size:13px;color:var(--blue);letter-spacing:.06em;margin-bottom:8px;
+    display:flex;align-items:center;gap:7px;
+  }
+  .ov-sec h4 .n{
+    width:19px;height:19px;border-radius:6px;background:var(--blue-soft);color:var(--blue);
+    display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;flex:none;
+  }
+  .ov-sec p{font-size:13.5px;color:var(--ink-2);line-height:1.85;margin:6px 0}
+  .ov-sec .math{font-size:13.5px}
+  .ov-sec b{color:var(--ink)}
+  .ov-table{width:100%;border-collapse:collapse;font-size:12.8px;margin-top:8px}
+  .ov-table th,.ov-table td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top;line-height:1.6}
+  .ov-table th{background:#f6f8fc;font-size:12px;color:var(--ink-3);font-weight:700}
+  .ov-tip{
+    margin-top:16px;border-left:3px solid var(--orange);background:var(--orange-soft);
+    border-radius:0 10px 10px 0;padding:10px 14px;font-size:12.8px;color:var(--ink-2);line-height:1.8;
+  }
   .settings-pop{
     position:absolute;top:52px;right:16px;width:288px;background:rgba(255,255,255,.96);
     backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
@@ -124,8 +189,9 @@
   .seg button.on{background:#fff;color:var(--blue);box-shadow:0 1px 4px rgba(16,24,40,.12)}
   .seg.purple button.on{color:var(--purple)}
   .seg.method button.on{color:var(--ink);font-weight:700}
-  .method-note{font-size:12px;color:var(--ink-3);margin:-6px 0 12px;display:flex;align-items:center;gap:6px}
-  .method-note .tag{background:var(--purple-soft);color:var(--purple);border-radius:6px;padding:2px 8px;font-weight:600}
+  .method-note{font-size:12px;color:var(--ink-3);margin:-6px 0 12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .method-note .tag{background:var(--purple-soft);color:var(--purple);border-radius:6px;padding:2px 8px;font-weight:600;flex:none}
+  .method-note .mn-text{flex:1;min-width:0}
   /* ---------- 解题步骤 ---------- */
   .steps{list-style:none;counter-reset:step}
   .steps li{
@@ -154,11 +220,13 @@
   .hl-g{color:#1f9d43;font-weight:600;font-style:normal}
   .hl-r{color:var(--red);font-weight:600;font-style:normal}
   /* ---------- 结论 ---------- */
+  /* 注意：不能用 display:flex 直接容纳文本——文本节点会被拆成独立 flex item 横向排布，
+     窄屏下每个碎片各自换行，出现「结 m = −2, n / 论： = 1」式的两列碎文本 */
   .conclusion{
     border-radius:12px;padding:13px 16px;font-size:14px;line-height:1.8;
     background:linear-gradient(120deg,#e9f3ff,#f0eaff);border:1px solid #c9dcff;
     box-shadow:0 2px 10px rgba(94,92,230,.10);
-    display:flex;gap:10px;align-items:flex-start;
+    display:block;
   }
   .conclusion .cicon{flex:none;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:2px}
   /* ---------- 画布工具栏 ---------- */
@@ -226,6 +294,19 @@
     <h1>第 20 题演示</h1>
   </div>
   <div class="spacer"></div>
+  <button class="setbtn" id="overviewBtn" title="总览 · 命题人视角（三问串联）" aria-label="总览">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9.2"/>
+      <path d="M12 10.8v5.6"/>
+      <circle cx="12" cy="7.4" r="0.5" fill="currentColor" stroke="none"/>
+    </svg>
+  </button>
+  <button class="setbtn" id="stepBtn" title="逐条演示（讲课模式：→ / 空格 / 翻页笔 出下一条，← 收起）" aria-label="逐条演示">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+      <path d="M4 6.5h16M4 12h16M4 17.5h9"/>
+    </svg>
+  </button>
+  <button class="setbtn txt" id="presoBtn" title="演示模式（投影大字号）" aria-label="演示模式">A+</button>
   <button class="setbtn" id="settingsBtn" title="设置" aria-label="设置">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="3.1"/>
@@ -253,7 +334,7 @@
     <div class="card problem-card">
       <h2><span class="dot"></span>题目回顾</h2>
       <div class="problem math">
-        设函数 f(x) = x² + mx − 4e<sup>nx−1</sup>（n ∈ 𝐙），曲线 y = f(x) 在点
+        设函数 f(x) = x² − mx − 4e<sup>nx−1</sup>，曲线 y = f(x) 在点
         (−1, f(−1)) 处的切线方程为 4x + e²y + e² + 8 = 0。
       </div>
       <div class="q-list math">
@@ -281,6 +362,9 @@
 
     <div class="card" id="stepsCard">
       <h2><span class="dot" id="stepsDot"></span><span id="stepsTitle">解答过程</span></h2>
+      <div class="stepwise-hint">
+        <kbd>→</kbd><kbd>空格</kbd><kbd>翻页笔 ▼</kbd> 出下一条 · <kbd>←</kbd><kbd>翻页笔 ▲</kbd> 收上一条 · 走完出结论
+      </div>
       <ol class="steps" id="stepsList"></ol>
     </div>
 
@@ -320,6 +404,66 @@
   </section>
 </main>
 
+<!-- ============ 总览：命题人视角 ============ -->
+<div class="overview" id="overview" role="dialog" aria-label="总览">
+  <div class="ov-card">
+    <div class="ov-head">
+      <h3>总览 · 一个「1」撑起一道压轴题</h3>
+      <button class="ov-close" id="overviewClose" title="关闭" aria-label="关闭">✕</button>
+    </div>
+    <div class="ov-lead">
+      三问看似独立，骨架是同一条相切关系：<span class="math"><b>抛物线 (x+1)² 与指数曲线 4e<sup>x−1</sup> 在 x = 1 处相切</b></span>——
+      该处值都是 4，斜率都是 4。相减得到 f(x)+1 = (x+1)² − 4e<sup>x−1</sup>，
+      于是 <b>x = 1 是二重零点</b>，三问的答案全部由它派生。
+    </div>
+
+    <div class="ov-sec">
+      <h4><span class="n">1</span>命题还原（这题是怎么造出来的）</h4>
+      <p>① 起点：切线放缩 <span class="math">e<sup>t</sup> ≥ 1 + t</span>（等号仅在 t = 0）。构造两条在 x = 1 相切的曲线：
+      <span class="math">(x+1)²</span> 与 <span class="math">4e<sup>x−1</sup></span>（值 4 = 4，斜率 4 = 4）。</p>
+      <p>② 相减：<span class="math">φ(x) = (x+1)² − 4e<sup>x−1</sup></span>，x = 1 是 φ 的二重零点；平移得
+      <span class="math">f(x) = φ(x) − 1 = x² + 2x − 4e<sup>x−1</sup></span>。</p>
+      <p>③ 入口：在 x = −1 处由 <span class="math">f(−1) = −1 − 4/e²</span>、<span class="math">f′(−1) = −4/e²</span> 生成切线
+      <span class="math">4x + e²y + e² + 8 = 0</span>，作为 (Ⅰ) 的条件反解 m、n。</p>
+    </div>
+
+    <div class="ov-sec">
+      <h4><span class="n">2</span>「1」的三次现身</h4>
+      <table class="ov-table">
+        <tr><th>问</th><th>「1」扮演的角色</th><th>精确事实</th></tr>
+        <tr><td>(Ⅰ)</td><td>超越方程 <span class="math">n+1 = 2e<sup>n−1</sup></span> 的显眼根</td><td>n = 1 代入 2 = 2，恒等式级成立</td></tr>
+        <tr><td>(Ⅱ)</td><td>极大值点 x₂</td><td><span class="math">f′(1) = 4 − 4 = 0</span>（二重零点 ⟹ 导数同时为零）</td></tr>
+        <tr><td>(Ⅲ)</td><td>比值函数最大值点</td><td><span class="math">F(1) = 4 − 4 = 0</span>，x &gt; 0 支 F ≤ 0 &lt; k 无解的根源</td></tr>
+      </table>
+    </div>
+
+    <div class="ov-sec">
+      <h4><span class="n">3</span>三问双轨对照（60% 标准 + 40% 进阶）</h4>
+      <table class="ov-table">
+        <tr><th>问</th><th>标准轨（考纲内可写）</th><th>进阶轨（高观点）</th><th>共用骨架</th></tr>
+        <tr><td>(Ⅰ)</td><td>联立 + 消元 + 试根</td><td>Lambert W 双分支显式求解</td><td><span class="math">n+1 = 2e<sup>n−1</sup></span></td></tr>
+        <tr><td>(Ⅱ)</td><td>二阶导卡值 + 零点存在性</td><td>凸性（严格凸至多两交点）</td><td><span class="math">x+1 = 2e<sup>x−1</sup></span></td></tr>
+        <tr><td>(Ⅲ)</td><td>隐函数分类讨论</td><td>比值函数 F 双射统一</td><td><span class="math">φ(x) = (x+1)² − 4e<sup>x−1</sup></span></td></tr>
+      </table>
+      <p>注意 (Ⅰ)(Ⅱ) 的骨架方程<b>同构</b>：两根 {1, −0.594} 在两问中各现身一次——(Ⅰ) 里 1 被官方取走、−0.594 被 Lambert W 揭出；(Ⅱ) 里 −0.594 是极小值点、1 是极大值点。</p>
+    </div>
+
+    <div class="ov-sec">
+      <h4><span class="n">4</span>讲台收尾的 30 秒</h4>
+      <div class="ov-tip">
+        「回头看，命题人只做了一件事：让抛物线和指数曲线在 x = 1 相切。这一个相切，决定了 (Ⅰ) 的整数解、
+        (Ⅱ) 的极大值点、(Ⅲ) 的『正半轴无解』。压轴题的吓人之处，往往只是一个被藏起来的相切关系。」
+      </div>
+    </div>
+
+    <div class="ov-sec">
+      <h4><span class="n">5</span>15 分钟配比建议</h4>
+      <p><b>(Ⅰ) 3 分钟</b>（考场解法 2 分钟 + Lambert 亮暗门 1 分钟）· <b>(Ⅱ) 4 分钟</b>（标准 2.5 + 凸性 1.5）·
+      <b>(Ⅲ) 8 分钟</b>（标准 4.5 + 比值函数 2.5 + 滑块演示 1）· 收尾 30 秒用本页。</p>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ================================================================
    2026 北京高考数学第 20 题 · 交互演示
@@ -336,7 +480,8 @@ const Fx   = x => ((x+1)*(x+1) - 4*Math.exp(x-1))/x;      // 第(Ⅲ)问比值�
 const kline= x => state.k*x - 1;                          // y = kx - 1
 const X1   = -1 - lambertW0(-2/(E*E));                    // 极小值点 x₁（数值）
 function lambertW0(z){ // 主分支 W₀，牛顿迭代（仅用于 x₁ 数值显示）
-  let w = z > -0.2 ? z*(1+z*(1+z*1.5)) : -1;              // 粗略初值
+  // 注意：初值不能取 −1——那是 W 的分支点，Halley 修正项分母 2w+2 = 0 会除零卡死，60 轮后原样返回 −1
+  let w = z > -0.2 ? z*(1+z*(1+z*1.5)) : -0.5;             // 粗略初值（避开分支点）
   for(let i=0;i<60;i++){
     const ew = Math.exp(w);
     const t = w*ew - z;
@@ -356,41 +501,40 @@ const CONTENT = {
   1:{
     title:'第 (Ⅰ) 问 · 求 m，n',
     methods:{
-      official:{ name:'官方答案', note:'分类讨论 + 整数约束',
+      official:{ name:'官方答案 · 考场解法', note:'联立消元 + 试根 · 考场姿态',
         steps:`
-<li>求导：<span class="math">f′(x) = 2x + m − 4n·e<sup>nx−1</sup></span>。切线化为斜截式：
+<li>求导：<span class="math">f′(x) = 2x − m − 4n·e<sup>nx−1</sup></span>。切线化为斜截式：
   <span class="math">y = −<span class="frac"><span>4</span><span>e²</span></span>x − 1 − <span class="frac"><span>8</span><span>e²</span></span></span>，
   故在 x = −1 处切线纵坐标为 <span class="math">−1 − <span class="frac"><span>4</span><span>e²</span></span></span>，斜率为 <span class="math">−<span class="frac"><span>4</span><span>e²</span></span></span>。</li>
 <li>由切点双重身份（在曲线上 + 斜率相等）列方程组：
-  <div class="key math">1 − m − 4e<sup>−n−1</sup> = −1 − <span class="frac"><span>4</span><span>e²</span></span> 　…①<br>
-  −2 + m − 4n·e<sup>−n−1</sup> = −<span class="frac"><span>4</span><span>e²</span></span> 　…②</div></li>
+  <div class="key math">1 + m − 4e<sup>−n−1</sup> = −1 − <span class="frac"><span>4</span><span>e²</span></span> 　…①<br>
+  −2 − m − 4n·e<sup>−n−1</sup> = −<span class="frac"><span>4</span><span>e²</span></span> 　…②</div></li>
 <li>① + ② 消去 m：
   <div class="key math">−1 − 4(n+1)e<sup>−n−1</sup> = −1 − 8e<sup>−2</sup>
   　⟹　(n+1)e<sup>−n−1</sup> = 2e<sup>−2</sup>
-  　⟹　<span class="hl">n + 1 = 2e<sup>n−1</sup>（n ∈ 𝐙）</span></div></li>
-<li>官方分类讨论：
-  <div class="key blue">n = 1：等式成立（2 = 2）；<br>
-  n ≥ 2：2e<sup>n−1</sup> &gt; 2·2<sup>n−1</sup> = 2<sup>n</sup> ≥ n+1，不成立；<br>
-  n = 0：1 ≠ <span class="frac"><span>2</span><span>e</span></span>，不成立；<br>
-  n ≤ −1：左边 n+1 ≤ 0，右边 2e<sup>n−1</sup> &gt; 0，不成立。</div></li>
-<li>故 <span class="hl">n = 1</span>，代回 ①：<span class="math">1 − m − 4e<sup>−2</sup> = −1 − 4e<sup>−2</sup></span> ⟹ <span class="hl">m = 2</span>。</li>`,
-        concl:'<b>结论：</b>m = 2，n = 1，即 <span class="math">f(x) = x² + 2x − 4e<sup>x−1</sup></span>。官方解法的核心是「指数与代数分离 + 整数分类讨论」。'
+  　⟹　<span class="hl">n + 1 = 2e<sup>n−1</sup></span>（超越方程）</div></li>
+<li>超越方程没有初等求根公式，考场姿态是<b>先试结构显眼的根</b>：
+  <div class="key blue">试 n = 1：左边 2，右边 2e⁰ = 2，<b>精确成立</b> ✓</div></li>
+<li>代回 ①：<span class="math">1 + m − 4e<sup>−2</sup> = −1 − 4e<sup>−2</sup></span> ⟹ <span class="hl">m = −2</span>。
+  故 <span class="hl">n = 1，m = −2</span>，即 <span class="math">f(x) = x² + 2x − 4e<sup>x−1</sup></span>。</li>
+<li>注意：官方标准答案对 (Ⅰ) 直接给出 m、n，<b>未附唯一性论证</b>——考场采分点在「列方程组 + 消元 + 试根解出」，不在唯一性。这颗雷的去向，见 Lambert W 解法第 4–5 步与右上角「总览」。</li>`,
+        concl:'<b>结论：</b>m = −2，n = 1，即 <span class="math">f(x) = x² + 2x − 4e<sup>x−1</sup></span>。考场解法核心：「切点双重身份」联立 + 消元 + 试根。'
       },
-      lambert:{ name:'Lambert W 解法', note:'超越方程显式求解 · 分支定解',
+      lambert:{ name:'Lambert W 解法', note:'超越方程显式求解 · 双分支亮暗门',
         steps:`
-<li>与官方解法相同，由切线条件列方程组并相加消元，得超越方程：
-  <div class="key math"><span class="hl-p">n + 1 = 2e<sup>n−1</sup></span>（n ∈ 𝐙）</div></li>
+<li>由切线条件列方程组并相加消元（同考场解法），得超越方程：
+  <div class="key math"><span class="hl-p">n + 1 = 2e<sup>n−1</sup></span></div></li>
 <li>移项构造 ue<sup>u</sup> 标准形：
   <div class="key math">(n+1)e<sup>−(n+1)</sup> = 2e<sup>−2</sup><br>
   令 u = −(n+1)，则 <span class="hl-p">u·e<sup>u</sup> = −2e<sup>−2</sup></span></div></li>
 <li>由 Lambert W 函数定义（we<sup>w</sup> = z ⟺ w = W(z)）：
   <div class="key math">u = W(−2e<sup>−2</sup>)　⟹　<span class="hl-p">n = −1 − W(−2e<sup>−2</sup>)</span></div></li>
-<li>因 −2e<sup>−2</sup> ≈ −0.2707 ∈ (−1/e, 0)，W 有<span class="hl-p">两个实分支</span>，逐一检验：
-  <div class="key purple">主支 W₀：W₀(−2e<sup>−2</sup>) ≈ −0.4064 ⟹ n ≈ −0.594 ∉ 𝐙，舍去；<br>
-  负一支 W₋₁：W₋₁(−2e<sup>−2</sup>) = −2（恰因 (−2)e<sup>−2</sup> = −2e<sup>−2</sup> 精确成立）⟹ <span class="hl-p">n = 1</span> ✓</div></li>
-<li>n = 1 代回原方程组得 <span class="hl-p">m = 2</span>。整数约束 n ∈ 𝐙 恰好筛掉主支解，W₋₁ 分支给出精确整数解。</li>
-<li class="alt" style="list-style:none">彩蛋：被舍去的非整数解 n ≈ −0.594，正是第 (Ⅱ) 问的极小值点 x₁ = −1 − W₀(−2e<sup>−2</sup>) —— 同一超越方程的两根在第 (Ⅰ)(Ⅱ) 问中各现身一次。</li>`,
-        concl:'<b>结论：</b>m = 2，n = 1。Lambert W 把「分类讨论」转化为「分支分析」：W₋₁(−2e<sup>−2</sup>) = −2 是精确恒等式，无需任何放缩。'
+<li>因 −2e<sup>−2</sup> ≈ −0.2707 ∈ (−1/e, 0)，W 有<span class="hl-p">两个实分支</span>——两支都保留，逐一计算：
+  <div class="key purple">负一支 W₋₁：W₋₁(−2e<sup>−2</sup>) = −2（精确：(−2)e<sup>−2</sup> = −2e<sup>−2</sup> 恒成立）⟹ n = 1，代回 ① 得 <span class="hl-p">m = −2</span> ✓（官方答案取的正是这组）<br>
+  主支 W₀：W₀(−2e<sup>−2</sup>) ≈ −0.4064 ⟹ n ≈ −0.594，代回 ① 得 m ≈ 0.123——<span class="hl-r">同样精确满足切线条件</span>。</div></li>
+<li><b>暗门</b>：本题流传题干对 m、n <b>没有附加任何约束</b>。若原卷实有「n 为整数／正数」类条件而流传版漏印，唯一性完美闭环；若没有，则 (Ⅰ) 严格有两组解，官方答案只给了一组、跳过了唯一性论证。Lambert W 的价值正是把「默认唯一」变成「显式双解」。</li>
+<li class="alt" style="list-style:none">彩蛋：W₀ 支给出的 n ≈ −0.594，正是第 (Ⅱ) 问的极小值点 x₁ = −1 − W₀(−2e<sup>−2</sup>)——同一超越方程的两根，在 (Ⅰ)(Ⅱ) 两问中各现身一次。</li>`,
+        concl:'<b>结论：</b>官方取的 (m, n) = (−2, 1) 对应 W₋₁ 支；W₀ 支揭示被跳过的第二组解 (m, n) ≈ (0.123, −0.594)。「分支分析」取代「分类讨论」，双解结构一览无余。'
       }
     }
   },
@@ -487,13 +631,15 @@ function render(){
     ms.forEach(b => b.classList.toggle('on', b.dataset.m === state.method));
     const m = c.methods[state.method];
     const isOfficial = state.method === 'official';
-    methodNote.innerHTML = `<span class="tag">解法</span>${m.note}`;
+    methodNote.innerHTML = `<span class="tag">解法</span><span class="mn-text">${m.note}</span>`;
     stepsTitle.textContent = m.name + ' · 解答过程';
     stepsDot.style.background = isOfficial ? 'var(--blue)' : 'var(--purple)';
     stepsList.innerHTML = m.steps;
     conclusion.innerHTML = m.concl;
   }
   $('#q3ctl').style.display = state.part === 3 ? 'flex' : 'none';
+  stepIdx = 0;                      // 切换小问/解法时，逐条演示从头开始
+  updateSteps();
   renderLegend();
   draw();
 }
@@ -723,11 +869,19 @@ function label(text, wpx, wpy, color='#5b6474', size=12, align='left', dy=-10){
   const px = sx(wpx), py = sy(wpy);
   const wtxt = ctx.measureText(text).width;
   /* 白底圆角小药丸，保证任何背景下可读 */
+  const bw = wtxt + 8, bh = 18, pad = 6;
+  let bx = px - (align==='left'?4:align==='right'?wtxt+4:wtxt/2+4);
+  let by = py + dy - 13;
+  /* 边界钳制：标签连同药丸整体收回画布内，窄屏/小画布下不被裁切 */
+  if(bx + bw > W - pad) bx = W - pad - bw;
+  if(bx < pad)         bx = pad;
+  if(by + bh > H - pad) by = H - pad - bh;
+  if(by < pad)          by = pad;
   ctx.fillStyle = 'rgba(255,255,255,.88)';
-  roundRect(px - (align==='left'?4:align==='right'?wtxt+4:wtxt/2+4), py+dy-13, wtxt+8, 18, 6);
+  roundRect(bx, by, bw, bh, 6);
   ctx.fill();
   ctx.fillStyle = color;
-  ctx.fillText(text, px, py+dy);
+  ctx.fillText(text, align==='left'? bx+4 : align==='right'? bx+bw-4 : bx+bw/2, by+13);
   ctx.restore();
 }
 function roundRect(x,y,w,h,r){
@@ -870,6 +1024,56 @@ document.addEventListener('click', e=>{
 document.addEventListener('keydown', e=>{
   if(e.key === 'Escape'){ settingsPop.classList.remove('open'); settingsBtn.classList.remove('on'); }
 });
+
+/* ---------------- 总览（命题人视角） ---------------- */
+const overview = $('#overview');
+const openOverview  = ()=> overview.classList.add('open');
+const closeOverview = ()=> overview.classList.remove('open');
+$('#overviewBtn').addEventListener('click', openOverview);
+$('#overviewClose').addEventListener('click', closeOverview);
+overview.addEventListener('click', e=>{ if(e.target === overview) closeOverview(); });
+document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeOverview(); });
+
+/* ---------------- 逐条演示（讲课模式） ---------------- */
+state.stepwise = false;
+let stepIdx = 0;
+const stepBtn = $('#stepBtn');
+function updateSteps(){
+  const lis = stepsList.querySelectorAll('li');
+  lis.forEach((li,i)=> li.classList.toggle('shown', !state.stepwise || i < stepIdx));
+  conclusion.classList.toggle('shown', !state.stepwise || stepIdx > lis.length);
+}
+function setStepwise(on){
+  state.stepwise = on; stepIdx = 0;
+  document.body.classList.toggle('stepwise', on);
+  stepBtn.classList.toggle('on', on);
+  try{ localStorage.setItem('bj20_stepwise', on ? '1' : '0'); }catch(_){}
+  updateSteps();
+}
+stepBtn.addEventListener('click', ()=> setStepwise(!state.stepwise));
+document.addEventListener('keydown', e=>{
+  if(overview.classList.contains('open')) return;   // 总览开着时不逐条
+  if(!state.stepwise) return;
+  const n = stepsList.querySelectorAll('li').length;
+  if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter'){
+    e.preventDefault();
+    if(stepIdx <= n){ stepIdx++; updateSteps(); }
+  } else if(e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace'){
+    e.preventDefault();
+    if(stepIdx > 0){ stepIdx--; updateSteps(); }
+  }
+});
+
+/* ---------------- 演示模式（投影大字号） ---------------- */
+const presoBtn = $('#presoBtn');
+function setPreso(on){
+  document.body.classList.toggle('preso', on);
+  presoBtn.classList.toggle('on', on);
+  try{ localStorage.setItem('bj20_preso', on ? '1' : '0'); }catch(_){}
+}
+presoBtn.addEventListener('click', ()=> setPreso(!document.body.classList.contains('preso')));
+try{ if(localStorage.getItem('bj20_preso') === '1') setPreso(true); }catch(_){}
+try{ if(localStorage.getItem('bj20_stepwise') === '1') setStepwise(true); }catch(_){}
 function applyShowSteps(v){
   document.body.classList.toggle('hide-steps', !v);
   showSteps.checked = v;
